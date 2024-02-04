@@ -1,0 +1,16 @@
+body {
+    margin: 0;
+    padding: 0;
+}
+
+.RegForm {
+    width: 30%;
+    margin: 0 auto; /* Center the form horizontally */
+    display: flex;
+    flex-direction: column;
+    border: 1px solid black;
+    box-sizing: border-box;
+    padding: 3%;
+    padding-top: 0.8%;
+    padding-bottom: 0.8%;
+}
