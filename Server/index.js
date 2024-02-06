@@ -4,6 +4,9 @@ const cors = require("cors");
 const HostelModel = require("./models/Hostel");
 const bcrypt = require("bcrypt");
 const AddHostelsModel = require('./models/Addhostels');
+const HostelListsModel = require('./models/HostelLists');
+
+
 
 const app = express();
 app.use(express.json());
@@ -40,6 +43,34 @@ app.post("/signup", (req, res) => {
     .catch((err) => console.log(err.message));
 });
 
+const ObjectId = mongoose.Types.ObjectId; // Importing ObjectId from mongoose
+
+app.post("/HostelLists", (req, res) => {
+  const newData = req.body;
+
+  // Generate a unique ObjectId for the new document
+  newData._id = new ObjectId();
+
+  HostelListsModel.create(newData)
+    .then((result) => res.json(result))
+    .catch((err) => {
+      console.error("Error adding data to HostelLists:", err); // Log the error details
+      res.status(500).json({ error: "Internal Server Error", details: err.message }); // Respond with error details
+    });
+});
+app.get("/HostelLists", (req, res) =>{
+  HostelListsModel.find({})
+  .then(AddHostels => res.json(AddHostels))
+  .catch(err => res.json(err))
+});
+
+
+
+app.get("/Users", (req, res) =>{
+  HostelModel.find({})
+  .then(users => res.json(users))
+  .catch(err => res.json(err))
+});
 
 app.get("/AddHostels", (req, res) =>{
   AddHostelsModel.find({})
@@ -65,38 +96,57 @@ app.put("/Update/:id", (req, res) =>{
   .then(AddHostels => res.json(AddHostels))
   .catch(err => res.json(err))
 })
-app.get("/ApprovedHostels", (req, res) => {
-  AddHostelsModel.find({ approved: true })
-     .then(AddHostels => res.json(AddHostels))
-     .catch(err => res.json(err))
-});
 
-app.get("/HostelList", (req, res) => {
-  AddHostelsModel.find()
-    .then((AddHostels) => {
-      res.json(AddHostels);
-    })
-    .catch((err) => {
-      console.error("Error fetching hostels:", err);
-      res.status(500).json({ error: "Internal Server Error" });
-    });
-});
-
-app.put("/HostelList/:id", (req, res) => {
+app.get('/getHostel/:id', (req, res)=>{
   const id = req.params.id;
-  AddHostelsModel.findByIdAndUpdate(id, { approved: true }, { new: true })
-    .then(updatedHostel => {
-      if (!updatedHostel) {
-        return res.status(404).json({ message: "Hostel not found" });
-      }
+  HostelListsModel.findById({_id:id})
+  .then(HostelLists => res.json(HostelLists))
+  .catch(err => res.json(err))
+})
+app.put("/UpdateHostelList/:id", (req, res) =>{
+  const id = req.params.id;
+  HostelListsModel.findByIdAndUpdate({_id: id}, {
+    Hostel_Name: req.body.Hostel_Name,
+    Hostel_Location: req.body.Hostel_Location, 
+    Hostel_Type: req.body.Hostel_Type, 
+    Manager_Name: req.body.Manager_Name, 
+    Manager_Contact: req.body.Manager_Contact})
+  .then(HostelLists => res.json(HostelLists))
+  .catch(err => res.json(err))
+})
 
-      res.json(updatedHostel);
-    })
-    .catch(err => {
-      console.error("Error updating hostel approval status:", err);
-      res.status(500).json({ error: "Internal Server Error" });
-    });
-});
+// app.get("/ApprovedHostels", (req, res) => {
+//   AddHostelsModel.find({ approved: true })
+//      .then(AddHostels => res.json(AddHostels))
+//      .catch(err => res.json(err))
+// });
+
+// app.get("/HostelList", (req, res) => {
+//   AddHostelsModel.find()
+//     .then((AddHostels) => {
+//       res.json(AddHostels);
+//     })
+//     .catch((err) => {
+//       console.error("Error fetching hostels:", err);
+//       res.status(500).json({ error: "Internal Server Error" });
+//     });
+// });
+
+// app.put("/HostelList/:id", (req, res) => {
+//   const id = req.params.id;
+//   AddHostelsModel.findByIdAndUpdate(id, { approved: true }, { new: true })
+//     .then(updatedHostel => {
+//       if (!updatedHostel) {
+//         return res.status(404).json({ message: "Hostel not found" });
+//       }
+
+//       res.json(updatedHostel);
+//     })
+//     .catch(err => {
+//       console.error("Error updating hostel approval status:", err);
+//       res.status(500).json({ error: "Internal Server Error" });
+//     });
+// });
 
 
 
@@ -109,6 +159,16 @@ app.delete('/Delete/:id', (req, res) =>{
   .then(res => res.json(res))
   .catch(err => res.json(err))
 })
+
+app.delete('/Deletes/:id', (req, res) => {
+  const id = req.params.id;
+  HostelListsModel.findByIdAndDelete({ _id: id })
+    .then(result => res.json({ success: true })) 
+    .catch(err => res.json({ success: false, error: err.message })) 
+});
+
+
+
 
 app.post("/Create", (req,res)=>{
   AddHostelsModel.create(req.body)

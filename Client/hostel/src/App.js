@@ -13,9 +13,11 @@ import "./App.css";
 import NoPage from "./pages/NoPage";
 import Admin from "./pages/Admin";
 import AdminAddHostel from "./pages/AdminAddHostel";
+import AdminHostelList from "./pages/AdminHostelList";
 import AddHostel from "./components/AddHostel";
 import Create from "./components/Create";
 import Update from "./components/Update";
+import UpdateHostelList from "./components/UpdateHostelList";
 import Delete from "./components/Delete";
 import HostelList from "./components/HostelList";
 
@@ -32,14 +34,16 @@ function App() {
 
           <Route path="/Admin" element={<Admin />} />
           <Route path="/AdminAddHostel" element={<AdminAddHostel />} />
+          <Route path="/AdminHostelList" element={<AdminHostelList />} />
           <Route path="/AdminHeader" element={<AdminHeader />} />
           <Route path="/AdminHome" element={<AdminHome />} />
           <Route path="/AdminSidebar" element={<AdminSidebar />} />
 
           <Route path="/AddHostel" element={<AddHostel />} />
-          <Route path="/HostelList/:id" element={<HostelList />} />
+          <Route path="/HostelList" element={<HostelList />} />
           <Route path="/Create" element={<Create />} />
           <Route path="/Update/:id" element={<Update />} />
+          <Route path="/UpdateHostelList/:id" element={<UpdateHostelList />} />
           <Route path="/Delete" element={<Delete />} />
           {/* Add a catch-all route for the root path */}
           {/* <Route path="/*" element={<Navigate to="/signup" />} /> */}

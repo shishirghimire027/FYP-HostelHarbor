@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 import {
   LineChart,
   Line,
@@ -21,6 +22,45 @@ import {
 } from "react-icons/bs";
 
 function AdminHome() {
+
+
+  const [pendingRequests, setPendingRequests] = useState(0);
+  const [users, setUsers] = useState(0);
+  const [totalHostels, setTotalHostel] = useState(0);
+
+  useEffect(() => {
+    axios
+      .get("http://localhost:3001/AddHostels")
+      .then((result) => {
+        const totalHostels = result.data.length;
+        console.log("Total Hostels in AddHostel:", totalHostels);
+        setPendingRequests(totalHostels); // Update state with the data length
+      })
+      .catch((err) => console.log(err));
+  }, []);
+
+  useEffect(() => {
+    axios
+      .get("http://localhost:3001/Users")
+      .then((result) => {
+        const totalUsers = result.data.length;
+        console.log("Total Users:", totalUsers);
+        setUsers(totalUsers); // Update state with the data length
+      })
+      .catch((err) => console.log(err));
+  }, []);
+  
+  useEffect(() => {
+    axios
+      .get("http://localhost:3001/HostelLists")
+      .then((result) => {
+        const totalHostels = result.data.length;
+        console.log("Total Users:", totalHostels);
+        setTotalHostel(totalHostels); // Update state with the data length
+      })
+      .catch((err) => console.log(err));
+  }, []);
+
   const data = [
     {
       name: "Page A",
@@ -77,7 +117,7 @@ function AdminHome() {
             <h3>HOSTELS</h3>
             <BsHousesFill className="card_icon" />
           </div>
-          <h1>800</h1>
+          <h1>{totalHostels}</h1>
         </div>
 
         <div className="card">
@@ -85,7 +125,7 @@ function AdminHome() {
             <h3>PENDING REQUESTS</h3>
             <BsHouseAddFill className="card_icon" />
           </div>
-          <h1>200</h1>
+          <h1>{pendingRequests}</h1>
         </div>
 
         <div className="card">
@@ -93,7 +133,7 @@ function AdminHome() {
             <h3>USERS</h3>
             <BsPersonCheck className="card_icon" />
           </div>
-          <h1>1000</h1>
+          <h1>{users}</h1>
         </div>
 
         <div className="card">

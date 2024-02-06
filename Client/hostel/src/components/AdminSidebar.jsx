@@ -30,7 +30,7 @@ function AdminSidebar({ openSidebarToggle, OpenSidebar }) {
           </a>
         </li>
         <li className="sidebar-list-item">
-          <a href="/">
+          <a href="/AdminHostelList">
             <BsHousesFill className="icon" /> Hostels
           </a>
         </li>
