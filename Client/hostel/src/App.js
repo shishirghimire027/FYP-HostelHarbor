@@ -9,6 +9,18 @@ import HostelReg from "./pages/HostelReg";
 import AdminHeader from "./components/AdminHeader";
 import AdminHome from "./components/AdminHome";
 import AdminSidebar from "./components/AdminSidebar";
+
+import Stepper from "./components/Stepper";
+import StepperControl from "./components/StepperControl";
+import StepperForm from "./pages/StepperForm";
+import HostelInfo from "./components/steps/HostelInfo";
+import Account from "./components/steps/Account";
+import Detail from "./components/steps/Detail";
+import Final from "./components/steps/Final";
+import Payment from "./components/steps/Payment";
+
+
+
 import "./App.css";
 import NoPage from "./pages/NoPage";
 import Admin from "./pages/Admin";
@@ -20,6 +32,7 @@ import Update from "./components/Update";
 import UpdateHostelList from "./components/UpdateHostelList";
 import Delete from "./components/Delete";
 import HostelList from "./components/HostelList";
+
 
 function App() {
   return (
@@ -45,6 +58,38 @@ function App() {
           <Route path="/Update/:id" element={<Update />} />
           <Route path="/UpdateHostelList/:id" element={<UpdateHostelList />} />
           <Route path="/Delete" element={<Delete />} />
+
+          <Route path="/Stepper" element={<Stepper />} />
+          <Route path="/StepperControl" element={<StepperControl />} />
+          <Route path="/StepperForm" element={<StepperForm />} />
+          <Route path="/HostelInfo" element={<HostelInfo />} />
+          <Route path="/Account" element={<Account />} />
+          <Route path="/Detail" element={<Detail />} />
+          <Route path="/Final" element={<Final />} />
+          <Route path="/Payment" element={<Payment />} />
+
+          {/* <Route
+            path="/Stepper"
+            element={
+              <React.Fragment>
+                <div className="md:w-1/2 mx-auto shadow-xl rounded-2xl pb-2 bg-white">
+                  <Stepper />
+                </div>
+              </React.Fragment>
+            }
+          />
+
+          <Route
+            path="/StepperControl"
+            element={
+              <React.Fragment>
+                <div className="container horizontal mt-5">
+                  <StepperControl />
+                </div>
+              </React.Fragment>
+            }
+          /> */}
+
           {/* Add a catch-all route for the root path */}
           {/* <Route path="/*" element={<Navigate to="/signup" />} /> */}
           <Route path="*" element={<NoPage />} />
