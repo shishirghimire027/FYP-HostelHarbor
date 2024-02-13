@@ -5,6 +5,7 @@ const HostelModel = require("./models/Hostel");
 const bcrypt = require("bcrypt");
 const AddHostelsModel = require('./models/Addhostels');
 const HostelListsModel = require('./models/HostelLists');
+const AddRoomsModel = require('./models/AddRooms')
 
 
 
@@ -115,38 +116,6 @@ app.put("/UpdateHostelList/:id", (req, res) =>{
   .catch(err => res.json(err))
 })
 
-// app.get("/ApprovedHostels", (req, res) => {
-//   AddHostelsModel.find({ approved: true })
-//      .then(AddHostels => res.json(AddHostels))
-//      .catch(err => res.json(err))
-// });
-
-// app.get("/HostelList", (req, res) => {
-//   AddHostelsModel.find()
-//     .then((AddHostels) => {
-//       res.json(AddHostels);
-//     })
-//     .catch((err) => {
-//       console.error("Error fetching hostels:", err);
-//       res.status(500).json({ error: "Internal Server Error" });
-//     });
-// });
-
-// app.put("/HostelList/:id", (req, res) => {
-//   const id = req.params.id;
-//   AddHostelsModel.findByIdAndUpdate(id, { approved: true }, { new: true })
-//     .then(updatedHostel => {
-//       if (!updatedHostel) {
-//         return res.status(404).json({ message: "Hostel not found" });
-//       }
-
-//       res.json(updatedHostel);
-//     })
-//     .catch(err => {
-//       console.error("Error updating hostel approval status:", err);
-//       res.status(500).json({ error: "Internal Server Error" });
-//     });
-// });
 
 
 
@@ -168,7 +137,17 @@ app.delete('/Deletes/:id', (req, res) => {
 });
 
 
+app.post("/CreateRoom", (req,res)=>{
+  AddRoomsModel.create(req.body)
+  .then(AddRooms => res.json(AddRooms))
+  .catch(err => res.json(err))
+})
 
+app.get("/AddRooms", (req, res) =>{
+  AddRoomsModel.find({})
+  .then(AddRooms => res.json(AddRooms))
+  .catch(err => res.json(err))
+});
 
 app.post("/Create", (req,res)=>{
   AddHostelsModel.create(req.body)

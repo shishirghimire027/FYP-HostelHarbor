@@ -34,6 +34,15 @@ import Delete from "./components/Delete";
 import HostelList from "./components/HostelList";
 
 
+import Manager from "./pages/Manager";
+import ManagerHeader from "./components/managerdash/ManagerHeader";
+import ManagerSidebar from "./components/managerdash/ManagerSidebar";
+import ManagerHome from "./components/managerdash/ManagerHome";
+import CreateRoom from "./components/managerdash/CreateRoom";
+import ManageRoom from "./components/managerdash/ManageRooms";
+import ManagerManageRoom from "./pages/Manager/ManagerManageRoom";
+
+
 function App() {
   return (
     <>
@@ -51,6 +60,17 @@ function App() {
           <Route path="/AdminHeader" element={<AdminHeader />} />
           <Route path="/AdminHome" element={<AdminHome />} />
           <Route path="/AdminSidebar" element={<AdminSidebar />} />
+
+          <Route path="/Manager" element={<Manager />} />
+          <Route path="/ManagerHeader" element={<ManagerHeader />} />
+          <Route path="/ManagerSidebar" element={<ManagerSidebar />} />
+          <Route path="/ManagerHome" element={<ManagerHome />} />
+          <Route path="/CreateRoom" element={<CreateRoom />} />
+          <Route path="/ManageRoom" element={<ManageRoom />} />
+          <Route path="/ManagerManageRoom" element={<ManagerManageRoom />} />
+
+
+
 
           <Route path="/AddHostel" element={<AddHostel />} />
           <Route path="/HostelList" element={<HostelList />} />
