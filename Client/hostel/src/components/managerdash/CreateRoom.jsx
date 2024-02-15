@@ -4,30 +4,40 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
 function CreateRoom() {
+  const [RoomNo, setRoomNo] = useState();
   const [RoomBed, setRoomBed] = useState();
   const [RoomType, setRoomType] = useState();
   const [RoomDescription, setRoomDescription] = useState();
   const [RoomPrice, setRoomPrice] = useState();
-  const [RoomNo, setRoomNo] = useState();
+  const [file, setFile] = useState([]);
   const navigate = useNavigate();
+
+
 
   const Submit = (e) => {
     e.preventDefault();
+
+    const formData = new FormData();
+    formData.append("RoomNo", RoomNo);
+    formData.append("RoomBed", RoomBed);
+    formData.append("RoomType", RoomType);
+    formData.append("RoomDescription", RoomDescription);
+    formData.append("RoomPrice", RoomPrice);
+    formData.append("file",file)
+  
+  
     axios
-      .post("http://localhost:3001/CreateRoom", {
-        RoomNo,
-        RoomBed,
-        RoomType,
-        RoomDescription,
-        RoomPrice,
-      })
+      .post("http://localhost:3001/CreateRoom", formData)
       .then((result) => {
         console.log(result);
-        navigate("/ManageRoom"); // Providing the absolute path
+        console.log(file);
+        navigate("/ManagerManageRoom");
       })
       .catch((err) => console.log(err));
   };
+  
 
+  
   return (
     <div className="d-flex vh-100 bg-primary justify-content-center align-items-center">
       <div className="bg-white rounded p-3">
@@ -50,19 +60,18 @@ function CreateRoom() {
               Total Beds
             </label>
             <select
-                className="form-select"
-                aria-label="Hostel Location"
-                onChange={(e) => setRoomBed(e.target.value)}
-              >
-                <option defaultValue>Total Bed</option>
-                <option>1</option>
-                <option>2</option>
-                <option>3</option>
-                <option>4</option>
-              </select>
+              className="form-select"
+              aria-label="Hostel Location"
+              onChange={(e) => setRoomBed(e.target.value)}
+            >
+              <option defaultValue>Total Bed</option>
+              <option>1</option>
+              <option>2</option>
+              <option>3</option>
+              <option>4</option>
+            </select>
           </div>
           <div className="row mb-5">
-           
             <div className="col-md-6">
               <label htmlFor="Room" className="form-label">
                 Room Type
@@ -78,7 +87,7 @@ function CreateRoom() {
               </select>
             </div>
           </div>
-          
+
           <div className="mb-3">
             <label htmlFor="Price" className="form-label">
               Price
@@ -103,6 +112,19 @@ function CreateRoom() {
               onChange={(e) => setRoomDescription(e.target.value)}
             />
           </div>
+          <div className="mb-3">
+            <label className="form-label" htmlFor="roomImages">
+              <b>Upload Room images</b>
+            </label>
+            <input
+              type="file"
+              className="form-control"
+              id="roomImages"
+              onChange={(e) => setFile(e.target.files[0])}
+              
+            />
+          </div>
+
           <button type="submit" className="btn btn-primary">
             Submit
           </button>

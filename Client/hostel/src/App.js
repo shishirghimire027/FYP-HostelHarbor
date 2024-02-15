@@ -41,6 +41,7 @@ import ManagerHome from "./components/managerdash/ManagerHome";
 import CreateRoom from "./components/managerdash/CreateRoom";
 import ManageRoom from "./components/managerdash/ManageRooms";
 import ManagerManageRoom from "./pages/Manager/ManagerManageRoom";
+import UpdateRoom from "./components/managerdash/UpdateRoom";
 
 
 function App() {
@@ -66,6 +67,7 @@ function App() {
           <Route path="/ManagerSidebar" element={<ManagerSidebar />} />
           <Route path="/ManagerHome" element={<ManagerHome />} />
           <Route path="/CreateRoom" element={<CreateRoom />} />
+          <Route path="/UpdateRoom" element={<UpdateRoom />} />
           <Route path="/ManageRoom" element={<ManageRoom />} />
           <Route path="/ManagerManageRoom" element={<ManagerManageRoom />} />
 
