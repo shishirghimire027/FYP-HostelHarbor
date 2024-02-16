@@ -1,17 +1,18 @@
 import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import "../../pages/Manager.css";
 import axios from "axios";
 
 function ManageRoom() {
   const [rooms, setRooms] = useState([]);
-  
+
   const [refresh, setRefresh] = useState(false);
 
   useEffect(() => {
     axios
       .get("http://localhost:3001/AddRooms")
       .then((result) => {
-        console.log(result)
+        console.log(result);
         setRooms(result.data);
       })
       .catch((err) => console.log(err));
@@ -41,21 +42,36 @@ function ManageRoom() {
       <div className="main-cards">
         {/* Render room cards */}
         {rooms.map((room, index) => (
-          <div className="card" key={index} style={{ backgroundColor: getCardColor(index) }}>
+          <div
+            className="card"
+            key={index}
+            style={{ backgroundColor: getCardColor(index) }}
+          >
             <div className="card-inner row">
-            <img src={`http://localhost:3001/images/${room.image}`} alt={`Room ${room.RoomNo}`} />
+              {/* <img src={`http://localhost:3001/images/${room.image}`} alt={`Room ${room.RoomNo}`} /> */}
               <h6>Room No: {room.RoomNo}</h6>
               <h6>Seater: {room.RoomBed}</h6>
               <h6>Room Type: {room.RoomType}</h6>
               <h6>Price: {room.RoomPrice}</h6>
-              <button className="btn btn-success">Edit Room</button>
-              <button className="btn btn-danger" onClick={() => handleDelete(room._id)}>Delete Room</button>
+              <Link to={`/UpdateRoom/${room._id}`} className="btn btn-success">
+                Edit Room
+              </Link>
+
+              <button
+                className="btn btn-danger"
+                onClick={() => handleDelete(room._id)}
+              >
+                Delete Room
+              </button>
             </div>
           </div>
         ))}
-      
+
         {/* Button to add more rooms */}
-        <div className="card" style={{ backgroundColor: getCardColor(rooms.length) }}>
+        <div
+          className="card"
+          style={{ backgroundColor: getCardColor(rooms.length) }}
+        >
           <div className="card-inner">
             <a href="/CreateRoom">
               <button className="addroombtn">

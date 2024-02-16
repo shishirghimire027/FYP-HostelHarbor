@@ -28,19 +28,7 @@ const AddHostel = ({ setTotalHostels }) => {
       .catch((errr) => console.log(errr));
   };
 
-  // const addToHostelLists = (selectedRow) => {
-  //   if (selectedRow) {
-  //     axios
-  //       .post("http://localhost:3001/HostelLists", selectedRow)
-  //       .then((res) => {
-  //         console.log(res);
-
-  //       })
-  //       .catch((err) => console.log(err));
-  //   } else {
-  //     console.log("No row selected");
-  //   }
-  // };
+  
   const addToHostelLists = (selectedRow) => {
     if (selectedRow) {
       axios

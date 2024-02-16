@@ -145,6 +145,9 @@ app.delete("/Deletes/:id", (req, res) => {
     .catch((err) => res.json({ success: false, error: err.message }));
 });
 
+
+
+
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, "../Client/hostel/public/images/rooms");
@@ -184,26 +187,54 @@ app.delete("/DeleteRoom/:id", (req, res) => {
     .catch((err) => res.status(500).json({ success: false, error: err }));
 });
 
-// app.post("/CreateRoom", (req, res) => {
-//   AddRoomsModel.create(req.body)
 
-//     .then((AddRooms) => res.json(AddRooms))
-//     .catch((err) => res.json(err));
-// });
-
-// app.post("/CreateRoom", upload.single("file"), (req, res) => {
-//   AddRoomsModel.create({ image: req.file.filename });
-//   console
-//     .log(req.file)
-//     .then((AddRooms) => res.json(AddRooms))
-//     .catch((err) => res.json(err));
-// });
 
 app.get("/AddRooms", (req, res) => {
   AddRoomsModel.find({})
     .then((AddRooms) => res.json(AddRooms))
     .catch((err) => res.json(err));
 });
+
+
+app.get("/AddRooms/:id", (req, res) => {
+  const id = req.params.id;
+  AddRoomsModel.findById({ _id: id })
+    .then((AddRooms) => res.json(AddRooms))
+    .catch((err) => res.json(err));
+});
+
+app.put("/UpdateRoom/:id", (req, res) => {
+  const id = req.params.id;
+  AddRoomsModel.findByIdAndUpdate(
+    { _id: id },
+    {
+      RoomNo: req.body.RoomNo,
+      RoomBed: req.body.RoomBed,
+      RoomType: req.body.RoomType,
+      RoomDescription: req.body.RoomDescription,
+      RoomPrice: req.body.RoomPrice,
+      image: req.body.image
+    }
+  )
+    .then((AddRooms) => res.json(AddRooms))
+    .catch((err) => res.json(err));
+});
+
+app.put("/UpdateRoomImg/:id", upload.single("image"), (req, res) => {
+  const id = req.params.id;
+  const imagePath = req.file.filename; // This will contain the filename of the uploaded image
+
+  AddRoomsModel.findByIdAndUpdate(
+    { _id: id },
+    { image: imagePath }, // Update the image field with the new filename
+    { new: true } // To return the updated document
+  )
+    .then((updatedRoom) => res.json(updatedRoom))
+    .catch((err) => res.status(500).json({ error: err }));
+});
+
+
+
 
 app.post("/Create", (req, res) => {
   AddHostelsModel.create(req.body)
