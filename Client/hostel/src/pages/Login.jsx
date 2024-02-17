@@ -10,24 +10,32 @@ function Login() {
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
 
+
+
+  axios.defaults.withCredentials= true;
+
+
   const handleSubmit = (e) => {
     e.preventDefault();
     axios
       .post("http://localhost:3001/login", { email, password })
       .then((result) => {
-        console.log(result);
+        const responseData = result.data;
+        localStorage.setItem('token', responseData.token);
+        console.log(responseData);
         console.log(email);
         console.log(password);
-        if (result.data === "Success") {
-          alert("Login Sucessfull");
-
+        
+        if (responseData.message === "Login Sucessful") {
+          alert("Login Successful");
+  
           console.log("Clearing fields");
           setEmail("");
           setPassword("");
-
+  
           navigate("/Home");
         } else {
-          alert("Indvalid username or password!");
+          alert("Invalid username or password!");
           console.log("Clearing fields");
           setEmail("");
           setPassword("");
@@ -35,6 +43,7 @@ function Login() {
       })
       .catch((err) => console.log(err));
   };
+  
 
   return (
     <>

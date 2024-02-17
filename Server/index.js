@@ -5,15 +5,26 @@ const bcrypt = require("bcrypt");
 const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
+const jwt = require("jsonwebtoken");
+const cookieParsar = require("cookie-parser");
+const crypto = require("crypto");
 
 const HostelModel = require("./models/Hostel");
 const AddHostelsModel = require("./models/Addhostels");
 const HostelListsModel = require("./models/HostelLists");
 const AddRoomsModel = require("./models/AddRooms");
+const { userInfo } = require("os");
 
 const app = express();
 app.use(express.json());
-app.use(cors());
+app.use(
+  cors({
+    origin: ["http://localhost:3000"],
+    methods: ["GET", "POST"],
+    credentials: true,
+  })
+);
+app.use(cookieParsar());
 
 app.use(
   "/images",
@@ -22,13 +33,57 @@ app.use(
 
 mongoose.connect("mongodb://localhost:27017/Hostel");
 
+// Generate a random secret key
+const secretKey = crypto.randomBytes(32).toString("hex");
+console.log("Generated Secret Key:", secretKey);
+
+// Middleware to authenticate token
+function authenticateToken(req, res, next) {
+  const token =
+    req.header("Authorization") && req.header("Authorization").split(" ")[1];
+  if (!token)
+    return res.status(401).json({ message: "Token is missing or invalid" });
+
+  jwt.verify(token, secretKey, (err, user) => {
+    if (err) return res.status(403).json({ message: "Access is Restricted" });
+    req.user = user;
+    next();
+  });
+}
+
+
+// const verifyUser = (req, res, next) => {
+//   const token = req.cookies.token;
+//   console.log(token);
+//   if(!token){
+//     return res.json("The token was not available")
+//   }else{
+//     jwt.verify(token, "jwt-secret-key", (err, decoded) =>{
+//       if(err) return res.json("Token is wrong")
+//       next();
+//     })
+//   }
+// };
+
+// app.get("/home", verifyUser, (req, res) => {
+//   return res.json("Success")
+// });
+
 app.post("/login", (req, res) => {
   const { email, password } = req.body;
   HostelModel.findOne({ email: email }).then((person) => {
     if (person) {
       bcrypt.compare(password, person.password, (err, response) => {
         if (response) {
-          res.json("Success");
+          const token = jwt.sign(
+            { id: person._id, role: person.role },
+            secretKey,
+            {
+              expiresIn: "1h", // or any other appropriate value
+            }
+          );
+
+          res.status(200).json({ token, message: "Login Sucessful", person });
         } else {
           res.json("The password is incorrect");
         }
@@ -37,6 +92,15 @@ app.post("/login", (req, res) => {
       res.json("No record existed");
     }
   });
+});
+
+//Protected route example
+app.get("/Protected", authenticateToken, (req, res) => {
+  if (req.person.role === "admin") {
+    res.json({ message: "Admin resource accessed" });
+  } else if (req.person.role === "user") {
+    res.json({ message: "User resource accessed" });
+  }
 });
 
 app.post("/signup", (req, res) => {
@@ -145,9 +209,6 @@ app.delete("/Deletes/:id", (req, res) => {
     .catch((err) => res.json({ success: false, error: err.message }));
 });
 
-
-
-
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, "../Client/hostel/public/images/rooms");
@@ -187,14 +248,11 @@ app.delete("/DeleteRoom/:id", (req, res) => {
     .catch((err) => res.status(500).json({ success: false, error: err }));
 });
 
-
-
 app.get("/AddRooms", (req, res) => {
   AddRoomsModel.find({})
     .then((AddRooms) => res.json(AddRooms))
     .catch((err) => res.json(err));
 });
-
 
 app.get("/AddRooms/:id", (req, res) => {
   const id = req.params.id;
@@ -213,7 +271,7 @@ app.put("/UpdateRoom/:id", (req, res) => {
       RoomType: req.body.RoomType,
       RoomDescription: req.body.RoomDescription,
       RoomPrice: req.body.RoomPrice,
-      image: req.body.image
+      image: req.body.image,
     }
   )
     .then((AddRooms) => res.json(AddRooms))
@@ -232,9 +290,6 @@ app.put("/UpdateRoomImg/:id", upload.single("image"), (req, res) => {
     .then((updatedRoom) => res.json(updatedRoom))
     .catch((err) => res.status(500).json({ error: err }));
 });
-
-
-
 
 app.post("/Create", (req, res) => {
   AddHostelsModel.create(req.body)
