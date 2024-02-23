@@ -20,7 +20,7 @@ app.use(express.json());
 app.use(
   cors({
     origin: ["http://localhost:3000"],
-    methods: ["GET", "POST"],
+    methods: ["GET", "POST", "DELETE", "PUT"],
     credentials: true,
   })
 );
@@ -44,30 +44,12 @@ function authenticateToken(req, res, next) {
   if (!token)
     return res.status(401).json({ message: "Token is missing or invalid" });
 
-  jwt.verify(token, secretKey, (err, user) => {
+  jwt.verify(token, secretKey, (err, person) => {
     if (err) return res.status(403).json({ message: "Access is Restricted" });
-    req.user = user;
+    req.person = person;
     next();
   });
 }
-
-
-// const verifyUser = (req, res, next) => {
-//   const token = req.cookies.token;
-//   console.log(token);
-//   if(!token){
-//     return res.json("The token was not available")
-//   }else{
-//     jwt.verify(token, "jwt-secret-key", (err, decoded) =>{
-//       if(err) return res.json("Token is wrong")
-//       next();
-//     })
-//   }
-// };
-
-// app.get("/home", verifyUser, (req, res) => {
-//   return res.json("Success")
-// });
 
 app.post("/login", (req, res) => {
   const { email, password } = req.body;
@@ -94,11 +76,122 @@ app.post("/login", (req, res) => {
   });
 });
 
+app.post("/Managerlogin", (req, res) => {
+  const { email, password } = req.body;
+  HostelListsModel.findOne({ email: email }).then((person) => {
+    if (person) {
+      bcrypt.compare(password, person.password, (err, response) => {
+        if (response) {
+          const token = jwt.sign(
+            { id: person._id, hostelId: person._id, role: person.role },
+            secretKey,
+            {
+              expiresIn: "1h", // or any other appropriate value
+            }
+          );
+
+          res.status(200).json({ token, message: "Login Sucessful", person });
+        } else {
+          res.json("The password is incorrect");
+        }
+      });
+    } else {
+      res.json("No record existed");
+    }
+  });
+});
+
+// app.get("/managerData", authenticateToken, (req, res) => {
+//   const loggedInManagerId = req.person.id; // Retrieve the logged-in manager's ID from the token payload
+
+//   // Find the manager's data using their ID
+//   HostelListsModel.findById(loggedInManagerId)
+//     .then((manager) => {
+//       if (manager) {
+//         // If manager data is found, send it as response
+//         res.status(200).json({ message: "Manager data retrieved successfully", manager });
+//       } else {
+//         // If manager data is not found, send an appropriate message
+//         res.status(404).json({ message: "Manager data not found" });
+//       }
+//     })
+//     .catch((err) => {
+//       // If any error occurs during the process, send an error response
+//       res.status(500).json({ message: "Internal server error" });
+//     });
+// });
+
+// Example route handler to get manager information after login
+// Middleware to authenticate token
+
+// Example route handler to get user information after login
+app.get("/userInfo", authenticateToken, (req, res) => {
+  // Access the logged-in user's ID from req.person
+  const userId = req.person.id;
+
+  // Query the database to find the user with the provided ID
+  HostelModel.findById(userId)
+    .then((user) => {
+      if (user) {
+        // If user is found, return their information
+        const userInfo = {
+          fname: user.fname,
+          lname: user.lname,
+          phone: user.phone,
+          email: user.email,
+        };
+        res.json(userInfo);
+      } else {
+        // If user is not found, return an error message
+        res.status(404).json({ message: "User not found" });
+      }
+    })
+    .catch((error) => {
+      // If an error occurs during database query, return an error message
+      console.error("Error fetching user information:", error);
+      res.status(500).json({ message: "Internal server error" });
+    });
+});
+
+app.get("/managerInfo", authenticateToken, (req, res) => {
+  // Access the logged-in user's ID from req.person
+  const managerID = req.person.id;
+
+  // Query the database to find the manager with the provided ID
+  HostelListsModel.findById(managerID)
+    .then((manager) => {
+      if (manager) {
+        // If manager is found, return their information
+        const managerInfo = {
+          _id: manager._id,
+          Hostel_Name: manager.Hostel_Name,
+          Hostel_Location: manager.Hostel_Location,
+          Hostel_Type: manager.Hostel_Type,
+          Manager_Name: manager.Manager_Name,
+          Manager_Contact: manager.Manager_Contact,
+          email: manager.email,
+        };
+        res.json(managerInfo);
+        console.log("managerInfo", managerInfo);
+      } else {
+        // If manager is not found, return an error message
+        res.status(404).json({ message: "Manager not found" });
+      }
+    })
+    .catch((error) => {
+      // If an error occurs during database query, return an error message
+      console.error("Error fetching manager information:", error);
+      res.status(500).json({ message: "Internal server error" });
+    });
+});
+
 //Protected route example
 app.get("/Protected", authenticateToken, (req, res) => {
   if (req.person.role === "admin") {
     res.json({ message: "Admin resource accessed" });
   } else if (req.person.role === "user") {
+    res.json({ message: "User resource accessed" });
+  } else if (req.person.role === "manager") {
     res.json({ message: "User resource accessed" });
   }
 });
@@ -114,6 +207,46 @@ app.post("/signup", (req, res) => {
     })
     .catch((err) => console.log(err.message));
 });
+
+app.post("/Create", (req, res) => {
+  AddHostelsModel.create(req.body)
+    .then((AddHostels) => res.json(AddHostels))
+    .catch((err) => res.json(err));
+});
+
+app.post("/HostelReg", (req, res) => {
+  const {
+    Hostel_Name,
+    Hostel_Location,
+    Hostel_Type,
+    Manager_Name,
+    Manager_Contact,
+    email,
+    password,
+  } = req.body;
+  bcrypt
+    .hash(password, 10)
+    .then((hash) => {
+      AddHostelsModel.create({
+        Hostel_Name,
+        Hostel_Location,
+        Hostel_Type,
+        Manager_Name,
+        Manager_Contact,
+        email,
+        password: hash,
+      })
+        .then((AddHostels) => res.json(AddHostels))
+        .catch((err) => res.json(err));
+    })
+    .catch((err) => console.log(err.message));
+});
+
+// app.post("/HostelReg", (req, res) => {
+//   AddHostelsModel.create(req.body)
+//     .then((AddHostels) => res.json(AddHostels))
+//     .catch((err) => res.json(err));
+// });
 
 const ObjectId = mongoose.Types.ObjectId; // Importing ObjectId from mongoose
 
@@ -136,6 +269,13 @@ app.get("/HostelLists", (req, res) => {
   HostelListsModel.find({})
     .then((AddHostels) => res.json(AddHostels))
     .catch((err) => res.json(err));
+});
+
+app.get("/HostelLists/:id", (req, res) => {
+  const id = req.params.id;
+  HostelListsModel.findById(id)
+    .then((hostel) => res.json(hostel))
+    .catch((err) => res.status(404).json({ message: "Hostel not found" }));
 });
 
 app.get("/Users", (req, res) => {
@@ -226,7 +366,8 @@ const upload = multer({
 });
 app.post("/CreateRoom", upload.single("file"), (req, res) => {
   console.log(req.file);
-  const { RoomNo, RoomBed, RoomType, RoomDescription, RoomPrice } = req.body;
+  const { RoomNo, RoomBed, RoomType, RoomDescription, RoomPrice, hostelId } =
+    req.body;
   const image = req.file.filename;
 
   AddRoomsModel.create({
@@ -236,6 +377,7 @@ app.post("/CreateRoom", upload.single("file"), (req, res) => {
     RoomDescription,
     RoomPrice,
     image,
+    hostel: hostelId, // Assign hostelId to hostel field
   })
     .then((AddRooms) => res.json(AddRooms))
     .catch((err) => console.log(err));
@@ -278,29 +420,43 @@ app.put("/UpdateRoom/:id", (req, res) => {
     .catch((err) => res.json(err));
 });
 
+// app.put("/UpdateRoomImg/:id", upload.single("image"), (req, res) => {
+//   const id = req.params.id;
+//   const imagePath = req.file.filename; // This will contain the filename of the uploaded image
+
+//   AddRoomsModel.findByIdAndUpdate(
+//     { _id: id },
+//     { image: imagePath }, // Update the image field with the new filename
+//     { new: true } // To return the updated document
+//   )
+//     .then((updatedRoom) => res.json(updatedRoom))
+//     .catch((err) => res.status(500).json({ error: err }));
+// });
 app.put("/UpdateRoomImg/:id", upload.single("image"), (req, res) => {
   const id = req.params.id;
-  const imagePath = req.file.filename; // This will contain the filename of the uploaded image
+  const imagePath = req.file.filename;
 
   AddRoomsModel.findByIdAndUpdate(
     { _id: id },
-    { image: imagePath }, // Update the image field with the new filename
-    { new: true } // To return the updated document
+    { image: imagePath },
+    { new: true }
   )
     .then((updatedRoom) => res.json(updatedRoom))
     .catch((err) => res.status(500).json({ error: err }));
 });
 
-app.post("/Create", (req, res) => {
-  AddHostelsModel.create(req.body)
-    .then((AddHostels) => res.json(AddHostels))
-    .catch((err) => res.json(err));
-});
-
-app.post("/HostelReg", (req, res) => {
-  AddHostelsModel.create(req.body)
-    .then((AddHostels) => res.json(AddHostels))
-    .catch((err) => res.json(err));
+// Update your GET endpoint to filter rooms based on hostel/manager ID
+app.get("/AddRooms", (req, res) => {
+  const hostelId = req.query.hostel;
+  // Query the database to find rooms associated with the provided hostel ID
+  AddRoomsModel.find({ hostel: hostelId })
+    .then((rooms) => {
+      res.json(rooms);
+    })
+    .catch((error) => {
+      console.error("Error fetching rooms:", error);
+      res.status(500).json({ message: "Internal server error" });
+    });
 });
 
 app.listen(3001, () => {

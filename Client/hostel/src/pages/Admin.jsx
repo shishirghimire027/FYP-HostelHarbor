@@ -23,7 +23,7 @@ function Admin() {
 
     // If token is not present, redirect to login
     if (!token) {
-      navigate("/");
+      navigate("/Login");
       return;
     }
 

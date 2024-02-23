@@ -1,0 +1,91 @@
+import { useState } from "react";
+// import "./Signup.css";
+
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+
+function LoginManager() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const navigate = useNavigate();
+
+  axios.defaults.withCredentials = true;
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    axios
+      .post("http://localhost:3001/Managerlogin", { email, password })
+      .then((result) => {
+        const responseData = result.data;
+        localStorage.setItem("token", responseData.token);
+        console.log(responseData);
+        console.log(email);
+        console.log(password);
+
+        if (responseData.message === "Login Sucessful") {
+          alert("Login Successful");
+
+          console.log("Clearing fields");
+          setEmail("");
+          setPassword("");
+
+          navigate("/Manager");
+        } else {
+          alert("Invalid username or password!");
+          console.log("Clearing fields");
+          setEmail("");
+          setPassword("");
+        }
+      })
+      .catch((err) => console.log(err));
+  };
+
+  return (
+    <>
+      <div className="whole-container">
+        <div className="right-container">
+          <form className="container" onSubmit={handleSubmit}>
+            <h1>Manager Log In</h1>
+
+            <div className="mb-3">
+              <label htmlFor="exampleInputEmail1" className="form-label">
+                Email address
+              </label>
+              <input
+                type="email"
+                className="form-control"
+                id="exampleInputEmail1"
+                aria-describedby="emailHelp"
+                onChange={(e) => setEmail(e.target.value)}
+                value={email}
+              />
+            </div>
+
+            <div className="mb-3">
+              <label htmlFor="exampleInputPassword1" className="form-label">
+                Password
+              </label>
+              <input
+                type="password"
+                className="form-control"
+                id="exampleInputPassword1"
+                onChange={(e) => setPassword(e.target.value)}
+                value={password}
+              />
+            </div>
+
+            <button type="submit" className="btn btn-primary">
+              Login
+            </button>
+          </form>
+          {/* <p>Don't have account?</p>
+          <Link to="/signup" type="submit" className="btn btn-primary">
+            Signup
+          </Link> */}
+        </div>
+      </div>
+    </>
+  );
+}
+
+export default LoginManager;

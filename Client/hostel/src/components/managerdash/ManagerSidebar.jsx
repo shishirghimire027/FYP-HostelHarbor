@@ -26,7 +26,7 @@ function ManagerSidebar({ openSidebarToggle, OpenSidebar }) {
       </div>
       <ul className="sidebar-list">
         <li className="sidebar-list-item">
-          <a href="/">
+          <a href="/Manager">
             <BsGrid1X2Fill className="icon" /> Dashboard
           </a>
         </li>

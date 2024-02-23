@@ -1,15 +1,16 @@
-import React from "react";
-import { useState } from "react";
+import React, { useState } from "react";
 import "./HostelReg.css";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
 function HostelReg() {
-  const [Hostel_Name, setHostelName] = useState();
-  const [Hostel_Type, setHostelType] = useState();
-  const [Hostel_Location, setHostelLocation] = useState();
-  const [Manager_Name, setManagerName] = useState();
-  const [Manager_Contact, setManagerContact] = useState();
+  const [Hostel_Name, setHostelName] = useState("");
+  const [Hostel_Type, setHostelType] = useState("");
+  const [Hostel_Location, setHostelLocation] = useState("");
+  const [Manager_Name, setManagerName] = useState("");
+  const [Manager_Contact, setManagerContact] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
   const handleSubmit = (e) => {
@@ -21,6 +22,8 @@ function HostelReg() {
         Hostel_Location,
         Manager_Name,
         Manager_Contact,
+        email,
+        password,
       })
       .then((result) => {
         console.log(result);
@@ -28,31 +31,6 @@ function HostelReg() {
       })
       .catch((err) => console.log(err));
   };
-
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [passwordsMatch, setPasswordsMatch] = useState(true);
-
-  const handlePasswordChange = (e) => {
-    setPassword(e.target.value);
-    setPasswordsMatch(e.target.value === confirmPassword);
-  };
-
-  const handleConfirmPasswordChange = (e) => {
-    setConfirmPassword(e.target.value);
-    setPasswordsMatch(password === e.target.value);
-  };
-
-  // const handleSubmit = (e) => {
-  //   e.preventDefault();
-  //   if (passwordsMatch) {
-
-  //     console.log("Form submitted successfully");
-  //   } else {
-  //     console.log("Passwords do not match");
-
-  //   }
-  // };
 
   return (
     <>
@@ -137,6 +115,7 @@ function HostelReg() {
             className="form-control"
             id="exampleInputEmail1"
             aria-describedby="emailHelp"
+            onChange={(e) => setEmail(e.target.value)}
           />
         </div>
         <div className="mb-3">
@@ -148,23 +127,8 @@ function HostelReg() {
             className="form-control"
             id="exampleInputPassword1"
             value={password}
-            onChange={handlePasswordChange}
+            onChange={(e) => setPassword(e.target.value)}
           />
-        </div>
-        <div className="mb-3">
-          <label htmlFor="exampleInputPassword2" className="form-label">
-            Confirm Password
-          </label>
-          <input
-            type="password"
-            className={`form-control ${passwordsMatch ? "" : "is-invalid"}`}
-            id="exampleInputPassword2"
-            value={confirmPassword}
-            onChange={handleConfirmPasswordChange}
-          />
-          {!passwordsMatch && (
-            <div className="invalid-feedback">Passwords do not match</div>
-          )}
         </div>
 
         <button type="submit" className="btn btn-primary">

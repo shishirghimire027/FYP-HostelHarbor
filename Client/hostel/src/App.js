@@ -4,7 +4,11 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
 import Home from "./pages/Home";
+import YourHostel from "./pages/YourHostel";
+import Navbar from "./components/users/Navbar";
+
 import Login from "./pages/Login";
+import LoginManager from "./pages/LoginManager";
 import HostelReg from "./pages/HostelReg";
 import AdminHeader from "./components/AdminHeader";
 import AdminHome from "./components/AdminHome";
@@ -19,8 +23,6 @@ import Detail from "./components/steps/Detail";
 import Final from "./components/steps/Final";
 import Payment from "./components/steps/Payment";
 
-
-
 import "./App.css";
 import NoPage from "./pages/NoPage";
 import Admin from "./pages/Admin";
@@ -33,7 +35,6 @@ import UpdateHostelList from "./components/UpdateHostelList";
 import Delete from "./components/Delete";
 import HostelList from "./components/HostelList";
 
-
 import Manager from "./pages/Manager";
 import ManagerHeader from "./components/managerdash/ManagerHeader";
 import ManagerSidebar from "./components/managerdash/ManagerSidebar";
@@ -44,7 +45,9 @@ import ManagerManageRoom from "./pages/Manager/ManagerManageRoom";
 import UpdateRoom from "./components/managerdash/UpdateRoom";
 import EditRoom from "./components/managerdash/EditRoom";
 import UpdateImage from "./components/managerdash/UpdateImage";
-
+import VisitHostel from "./components/users/VisitHostel";
+import HostelData from "./components/managerdash/HostelData";
+import UserData from "./components/users/UserData";
 
 function App() {
   return (
@@ -52,10 +55,15 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/Home" element={<Home />} />
+          <Route path="/YourHostel" element={<YourHostel />} />
+          <Route path="/VisitHostel/:id" element={<VisitHostel />} />
+          <Route path="/Navbar" element={<Navbar />} />
           <Route path="/login" element={<Login />} />
           <Route index element={<Navigate to="/Login" />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/HostelReg" element={<HostelReg />} />
+          <Route path="/UserData" element={<UserData />} />
+
 
           <Route path="/Admin" element={<Admin />} />
           <Route path="/AdminAddHostel" element={<AdminAddHostel />} />
@@ -64,6 +72,7 @@ function App() {
           <Route path="/AdminHome" element={<AdminHome />} />
           <Route path="/AdminSidebar" element={<AdminSidebar />} />
 
+          <Route path="/LoginManager" element={<LoginManager />} />
           <Route path="/Manager" element={<Manager />} />
           <Route path="/ManagerHeader" element={<ManagerHeader />} />
           <Route path="/ManagerSidebar" element={<ManagerSidebar />} />
@@ -74,8 +83,7 @@ function App() {
           <Route path="/EditRoom/:id" element={<EditRoom />} />
           <Route path="/UpdateImage/:id" element={<UpdateImage />} />
           <Route path="/ManagerManageRoom" element={<ManagerManageRoom />} />
-
-
+          <Route path="/HostelData" element={<HostelData />} />
 
 
           <Route path="/AddHostel" element={<AddHostel />} />

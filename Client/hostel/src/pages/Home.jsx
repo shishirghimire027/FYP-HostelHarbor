@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
+import Navbar from "../components/users/Navbar"
 
 function Home() {
   const [message, setMessage] = useState("");
@@ -23,8 +24,8 @@ function Home() {
 
     // Check if the role is 'user'
     if (decodedToken.role !== "user") {
-      // Redirect to the login page if the user is not a user
-      navigate("/Admin");
+      // Redirect to the Admin page if the user is not a user
+      navigate("/Login");
       return;
     }
 
@@ -47,6 +48,7 @@ function Home() {
 
   return (
     <div>
+      <Navbar />
       <h1>Welcome to home page</h1>
     </div>
   );

@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "../../pages/HostelReg.css";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { jwtDecode } from "jwt-decode"; // Import jwtDecode from jwt-decode
 
 function CreateRoom() {
   const [RoomNo, setRoomNo] = useState();
@@ -10,9 +11,20 @@ function CreateRoom() {
   const [RoomDescription, setRoomDescription] = useState();
   const [RoomPrice, setRoomPrice] = useState();
   const [file, setFile] = useState([]);
+  const [hostelId, setHostelId] = useState(null); // Define hostelId state
   const navigate = useNavigate();
 
-
+  useEffect(() => {
+    // Retrieve hostel ID from token in local storage...
+    const token = localStorage.getItem("token");
+    if (token) {
+      const decodedToken = jwtDecode(token); // Decode the JWT token
+      const id = decodedToken.id; // Extract hostelId from the decoded token
+      setHostelId(id); // Set hostelId state
+    } else {
+      console.error("Token not found in local storage");
+    }
+  }, []);
 
   const Submit = (e) => {
     e.preventDefault();
@@ -23,9 +35,10 @@ function CreateRoom() {
     formData.append("RoomType", RoomType);
     formData.append("RoomDescription", RoomDescription);
     formData.append("RoomPrice", RoomPrice);
-    formData.append("file",file)
-  
-  
+    formData.append("file", file);
+    // Append hostel ID to form data...
+    formData.append("hostelId", hostelId);
+
     axios
       .post("http://localhost:3001/CreateRoom", formData)
       .then((result) => {
@@ -35,9 +48,7 @@ function CreateRoom() {
       })
       .catch((err) => console.log(err));
   };
-  
 
-  
   return (
     <div className="d-flex vh-100 bg-primary justify-content-center align-items-center">
       <div className="bg-white rounded p-3">
@@ -121,7 +132,6 @@ function CreateRoom() {
               className="form-control"
               id="roomImages"
               onChange={(e) => setFile(e.target.files[0])}
-              
             />
           </div>
 
