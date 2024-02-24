@@ -50,6 +50,16 @@ function authenticateToken(req, res, next) {
     next();
   });
 }
+// function authenticateToken(req, res, next) {
+//   const token = req.header("Authorization") && req.header("Authorization").split(" ")[1];
+//   if (!token) return res.status(401).json({ message: "Token is missing or invalid" });
+
+//   jwt.verify(token, secretKey, (err, decodedToken) => {
+//     if (err) return res.status(403).json({ message: "Access is Restricted" });
+//     req.person = decodedToken; // Set the decoded token as req.person
+//     next();
+//   });
+// }
 
 app.post("/login", (req, res) => {
   const { email, password } = req.body;
@@ -364,22 +374,50 @@ const storage = multer.diskStorage({
 const upload = multer({
   storage: storage,
 });
+// app.post("/CreateRoom", upload.single("file"), (req, res) => {
+//   console.log(req.file);
+//   const { RoomNo, RoomBed, RoomType, RoomDescription, RoomPrice, hostelId } =
+//     req.body;
+//   const image = req.file.filename;
+
+//   AddRoomsModel.create({
+//     RoomNo,
+//     RoomBed,
+//     RoomType,
+//     RoomDescription,
+//     RoomPrice,
+//     image,
+//     hostel: hostelId, // Assign hostelId to hostel field
+//   })
+//     .then((AddRooms) => res.json(AddRooms))
+//     .catch((err) => console.log(err));
+// });
 app.post("/CreateRoom", upload.single("file"), (req, res) => {
   console.log(req.file);
-  const { RoomNo, RoomBed, RoomType, RoomDescription, RoomPrice, hostelId } =
-    req.body;
+  const { RoomNo, RoomBed, RoomType, RoomDescription, RoomPrice, hostelId } = req.body;
   const image = req.file.filename;
 
-  AddRoomsModel.create({
-    RoomNo,
-    RoomBed,
-    RoomType,
-    RoomDescription,
-    RoomPrice,
-    image,
-    hostel: hostelId, // Assign hostelId to hostel field
-  })
-    .then((AddRooms) => res.json(AddRooms))
+  // Fetch the hostel details based on hostelId
+  HostelListsModel.findById(hostelId)
+    .then((hostel) => {
+      if (!hostel) {
+        return res.status(404).json({ message: "Hostel not found" });
+      }
+      // Create a new room including hostel name and location
+      AddRoomsModel.create({
+        RoomNo,
+        RoomBed,
+        RoomType,
+        RoomDescription,
+        RoomPrice,
+        image,
+        hostel: hostelId,
+        hostelName: hostel.Hostel_Name, // Include hostel name
+        hostelLocation: hostel.Hostel_Location, // Include hostel location
+      })
+      .then((AddRooms) => res.json(AddRooms))
+      .catch((err) => console.log(err));
+    })
     .catch((err) => console.log(err));
 });
 
@@ -457,6 +495,25 @@ app.get("/AddRooms", (req, res) => {
       console.error("Error fetching rooms:", error);
       res.status(500).json({ message: "Internal server error" });
     });
+});
+
+
+
+app.post('/bookingRequest', authenticateToken, (req, res) => {
+  try {
+    // Extract the booking request data from the request body
+    const bookingData = req.body;
+
+    // Process the booking request data as needed
+    // For example, you can save it to a database, send notifications, etc.
+
+    // Send a success response back to the client
+    res.status(201).json({ message: 'Booking request received successfully', data: bookingData });
+  } catch (error) {
+    // If an error occurs, send an error response
+    console.error('Error processing booking request:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
 });
 
 app.listen(3001, () => {

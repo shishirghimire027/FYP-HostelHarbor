@@ -15,4 +15,11 @@
   .table-label {
     font-weight: bold;
   }
+  .container-left {
+    float: left; /* This will make sure it's on the left */
+  }
   
+  .container-right {
+    float: right; /* This will make sure it's on the right */
+  }
+    

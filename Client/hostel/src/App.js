@@ -48,6 +48,11 @@ import UpdateImage from "./components/managerdash/UpdateImage";
 import VisitHostel from "./components/users/VisitHostel";
 import HostelData from "./components/managerdash/HostelData";
 import UserData from "./components/users/UserData";
+import Logout from "./pages/Logout";
+import BookHostelInfo from "./components/users/BookHostelInfo";
+import BookUserInfo from "./components/users/BookUserInfo";
+import BookHostel from "./components/users/BookHostel";
+import BookRoomInfo from "./components/users/BookRoomInfo";
 
 function App() {
   return (
@@ -59,10 +64,17 @@ function App() {
           <Route path="/VisitHostel/:id" element={<VisitHostel />} />
           <Route path="/Navbar" element={<Navbar />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/Logout" element={<Logout />} />
           <Route index element={<Navigate to="/Login" />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/HostelReg" element={<HostelReg />} />
           <Route path="/UserData" element={<UserData />} />
+
+          <Route path="/BookHostel/:id" element={<BookHostel />} />
+          <Route path="/BookHostelInfo" element={<BookHostelInfo />} />
+          <Route path="/BookUserInfo" element={<BookUserInfo />} />
+          <Route path="/BookRoomInfo" element={<BookRoomInfo />} />
+
 
 
           <Route path="/Admin" element={<Admin />} />
