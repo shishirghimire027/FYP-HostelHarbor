@@ -13,6 +13,7 @@ const HostelModel = require("./models/Hostel");
 const AddHostelsModel = require("./models/Addhostels");
 const HostelListsModel = require("./models/HostelLists");
 const AddRoomsModel = require("./models/AddRooms");
+const Booking = require('./models/Booking');
 const { userInfo } = require("os");
 
 const app = express();
@@ -38,28 +39,29 @@ const secretKey = crypto.randomBytes(32).toString("hex");
 console.log("Generated Secret Key:", secretKey);
 
 // Middleware to authenticate token
+// function authenticateToken(req, res, next) {
+//   const token =
+//     req.header("Authorization") && req.header("Authorization").split(" ")[1];
+//   if (!token)
+//     return res.status(401).json({ message: "Token is missing or invalid" });
+
+//   jwt.verify(token, secretKey, (err, person) => {
+//     if (err) return res.status(403).json({ message: "Access is Restricted" });
+//     req.person = person;
+//     next();
+//   });
+// }
 function authenticateToken(req, res, next) {
-  const token =
-    req.header("Authorization") && req.header("Authorization").split(" ")[1];
-  if (!token)
-    return res.status(401).json({ message: "Token is missing or invalid" });
+  const authHeader = req.header('Authorization');
+  const token = authHeader && authHeader.split(' ')[1];
+  if (!token) return res.status(401).json({ message: 'Token is missing or invalid' });
 
   jwt.verify(token, secretKey, (err, person) => {
-    if (err) return res.status(403).json({ message: "Access is Restricted" });
+    if (err) return res.status(403).json({ message: 'Access is Restricted' });
     req.person = person;
     next();
   });
 }
-// function authenticateToken(req, res, next) {
-//   const token = req.header("Authorization") && req.header("Authorization").split(" ")[1];
-//   if (!token) return res.status(401).json({ message: "Token is missing or invalid" });
-
-//   jwt.verify(token, secretKey, (err, decodedToken) => {
-//     if (err) return res.status(403).json({ message: "Access is Restricted" });
-//     req.person = decodedToken; // Set the decoded token as req.person
-//     next();
-//   });
-// }
 
 app.post("/login", (req, res) => {
   const { email, password } = req.body;
@@ -394,7 +396,8 @@ const upload = multer({
 // });
 app.post("/CreateRoom", upload.single("file"), (req, res) => {
   console.log(req.file);
-  const { RoomNo, RoomBed, RoomType, RoomDescription, RoomPrice, hostelId } = req.body;
+  const { RoomNo, RoomBed, RoomType, RoomDescription, RoomPrice, hostelId } =
+    req.body;
   const image = req.file.filename;
 
   // Fetch the hostel details based on hostelId
@@ -415,8 +418,8 @@ app.post("/CreateRoom", upload.single("file"), (req, res) => {
         hostelName: hostel.Hostel_Name, // Include hostel name
         hostelLocation: hostel.Hostel_Location, // Include hostel location
       })
-      .then((AddRooms) => res.json(AddRooms))
-      .catch((err) => console.log(err));
+        .then((AddRooms) => res.json(AddRooms))
+        .catch((err) => console.log(err));
     })
     .catch((err) => console.log(err));
 });
@@ -497,24 +500,69 @@ app.get("/AddRooms", (req, res) => {
     });
 });
 
-
-
-app.post('/bookingRequest', authenticateToken, (req, res) => {
+app.post('/bookingRequest', authenticateToken, async (req, res) => {
   try {
     // Extract the booking request data from the request body
-    const bookingData = req.body;
+    const { hostelInfo, userInfo, id } = req.body;
 
-    // Process the booking request data as needed
-    // For example, you can save it to a database, send notifications, etc.
+    // Fetch the hostel details based on hostelId
+    AddRoomsModel.findById(id)
+      .then(async (Room) => { // Declare the arrow function as async
+        if (!Room) {
+          return res.status(404).json({ message: "Hostel not found" });
+        }
 
-    // Send a success response back to the client
-    res.status(201).json({ message: 'Booking request received successfully', data: bookingData });
+        // Create a new booking instance based on the schema
+        const newBooking = new Booking({
+          RoomID: Room.id,
+          hostelName: hostelInfo.hostelName,
+          hostelLocation: hostelInfo.hostelLocation,
+          roomNo: hostelInfo.RoomNo,
+          roomBed: hostelInfo.RoomBed,
+          roomType: hostelInfo.RoomType,
+          roomDescription: hostelInfo.RoomDescription,
+          roomPrice: hostelInfo.RoomPrice,
+          image: hostelInfo.image,
+          userEmail: userInfo.email,
+          userName: `${userInfo.fname} ${userInfo.lname}`,
+          userPhone: userInfo.phone
+        });
+
+        // Save the new booking to the database
+        await newBooking.save();
+
+        // Send a success response back to the client
+        res.status(201).json({
+          message: 'Booking request received successfully',
+          data: newBooking,
+        });
+      });
   } catch (error) {
     // If an error occurs, send an error response
     console.error('Error processing booking request:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
+
+app.get('/bookingStatus/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    // Replace this logic with your actual logic to check booking status
+    // For demonstration purposes, I'm assuming you have some database model named Booking
+    const booking = await Booking.findOne({ hostelId: id });
+    
+    if (booking) {
+      res.status(200).json({ status: booking.status }); // Return the status if booking exists
+    } else {
+      res.status(404).json({ message: 'Booking not found' }); // Return a message if booking does not exist
+    }
+  } catch (error) {
+    console.error('Error checking booking status:', error);
+    res.status(500).json({ error: 'Internal server error' }); // Return an error response if an error occurs
+  }
+});
+
 
 app.listen(3001, () => {
   console.log("server is running");

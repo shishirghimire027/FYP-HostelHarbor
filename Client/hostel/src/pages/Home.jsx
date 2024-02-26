@@ -25,7 +25,7 @@ function Home() {
     // Check if the role is 'user'
     if (decodedToken.role !== "user") {
       // Redirect to the Admin page if the user is not a user
-      navigate("/Login");
+      navigate("/Admin");
       return;
     }
 

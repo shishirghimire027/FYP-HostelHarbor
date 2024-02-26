@@ -8,9 +8,20 @@ import {
   BsFileSpreadsheet,
   BsFileTextFill,
 } from "react-icons/bs";
+import { IoIosLogOut } from "react-icons/io";
 import "../../pages/Manager.css";
 
 function ManagerSidebar({ openSidebarToggle, OpenSidebar }) {
+  // State to manage modal visibility
+  
+
+  // Function to handle logout
+  const handleLogout = () => {
+    // Remove the token from local storage
+    localStorage.removeItem("token");
+    // Redirect to the login page or any other desired page
+    window.location.href = "/LoginManager";
+  };
   return (
     <aside
       id="managersidebar"
@@ -58,6 +69,11 @@ function ManagerSidebar({ openSidebarToggle, OpenSidebar }) {
         <li className="sidebar-list-item">
           <a href="/">
             <BsFileTextFill className="icon" /> Access Report
+          </a>
+        </li>
+        <li className="sidebar-list-item">
+          <a href="/LoginManager" onClick={handleLogout}>
+            <IoIosLogOut className="icon" /> Logout
           </a>
         </li>
       </ul>
