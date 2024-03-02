@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 // Define the schema for booking data
-const bookingSchema = new mongoose.Schema({
+const residentSchema = new mongoose.Schema({
   User_id: {
     type: mongoose.Schema.Types.ObjectId, 
     required: true
@@ -56,7 +56,7 @@ const bookingSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    default: 'Pending'
+    default: 'Active'
   },
   RoomID: { 
     type: mongoose.Schema.Types.ObjectId, 
@@ -65,7 +65,7 @@ const bookingSchema = new mongoose.Schema({
   // Add more fields as needed
 });
 
-// Create a model for the booking schema
-const Booking = mongoose.model('BookingRequest', bookingSchema);
+// Create a model for the resdident schema
+const Resident = mongoose.model('Resident', residentSchema);
 
-module.exports = Booking;
+module.exports = Resident;

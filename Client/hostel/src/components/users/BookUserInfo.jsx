@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { BsPersonLinesFill,BsTelephone, BsEnvelope  } from "react-icons/bs";
+import { BsPersonLinesFill, BsTelephone, BsEnvelope } from "react-icons/bs";
 
 const BookUserInfo = () => {
   // State to store user information
@@ -35,8 +35,8 @@ const BookUserInfo = () => {
 
   // Render the component only when userInfo is not null
   return userInfo ? (
-<main className="container">
-  <h4>Customer Information</h4>
+    <main className="container">
+      <h4>Customer Information</h4>
       <div
         className="Upper-Container bg-light mt-2"
         style={{ padding: "2%", border: "1px solid #dee2e6" }}
@@ -46,7 +46,10 @@ const BookUserInfo = () => {
             <BsPersonLinesFill className="icon" />
           </div>
           <div className="col">
-            <p className="mb-0">Book to: {userInfo.fname} {userInfo.lname}</p>
+            <p className="mb-0">
+             
+              Book to: {userInfo.fname} {userInfo.lname}
+            </p>
           </div>
         </div>
         <div className="row border-bottom pb-2 mb-2 align-items-center">
@@ -67,7 +70,6 @@ const BookUserInfo = () => {
         </div>
       </div>
     </main>
-
   ) : null; // Render null if userInfo is null
 };
 

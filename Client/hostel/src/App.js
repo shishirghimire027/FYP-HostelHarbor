@@ -5,6 +5,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
 import Home from "./pages/Home";
 import YourHostel from "./pages/YourHostel";
+import FindHostel from "./pages/FindHostel";
 import Navbar from "./components/users/Navbar";
 
 import Login from "./pages/Login";
@@ -45,6 +46,9 @@ import ManagerManageRoom from "./pages/Manager/ManagerManageRoom";
 import UpdateRoom from "./components/managerdash/UpdateRoom";
 import EditRoom from "./components/managerdash/EditRoom";
 import UpdateImage from "./components/managerdash/UpdateImage";
+import ManageBooking from "./components/managerdash/ManageBooking";
+
+
 import VisitHostel from "./components/users/VisitHostel";
 import HostelData from "./components/managerdash/HostelData";
 import UserData from "./components/users/UserData";
@@ -53,6 +57,9 @@ import BookHostelInfo from "./components/users/BookHostelInfo";
 import BookUserInfo from "./components/users/BookUserInfo";
 import BookHostel from "./components/users/BookHostel";
 import BookRoomInfo from "./components/users/BookRoomInfo";
+import ManagerManageBooking from "./pages/Manager/ManagerManageBooking";
+import UserHostel from "./components/userHostel/UserHostel";
+import PendingRequest from "./components/userHostel/PendingRequest";
 
 function App() {
   return (
@@ -61,6 +68,8 @@ function App() {
         <Routes>
           <Route path="/Home" element={<Home />} />
           <Route path="/YourHostel" element={<YourHostel />} />
+          <Route path="/FindHostel" element={<FindHostel />} />
+
           <Route path="/VisitHostel/:id" element={<VisitHostel />} />
           <Route path="/Navbar" element={<Navbar />} />
           <Route path="/login" element={<Login />} />
@@ -69,6 +78,8 @@ function App() {
           <Route path="/signup" element={<Signup />} />
           <Route path="/HostelReg" element={<HostelReg />} />
           <Route path="/UserData" element={<UserData />} />
+          <Route path="/UserHostel" element={<UserHostel />} />
+          <Route path="/PendingRequest" element={<PendingRequest />}/>
 
           <Route path="/BookHostel/:id" element={<BookHostel />} />
           <Route path="/BookHostelInfo" element={<BookHostelInfo />} />
@@ -95,6 +106,8 @@ function App() {
           <Route path="/EditRoom/:id" element={<EditRoom />} />
           <Route path="/UpdateImage/:id" element={<UpdateImage />} />
           <Route path="/ManagerManageRoom" element={<ManagerManageRoom />} />
+          <Route path="/ManagerManageBooking" element={<ManagerManageBooking />} />
+          <Route path="/ManageBooking" element={<ManageBooking />} />
           <Route path="/HostelData" element={<HostelData />} />
 
 

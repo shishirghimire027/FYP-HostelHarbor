@@ -13,7 +13,8 @@ const HostelModel = require("./models/Hostel");
 const AddHostelsModel = require("./models/Addhostels");
 const HostelListsModel = require("./models/HostelLists");
 const AddRoomsModel = require("./models/AddRooms");
-const Booking = require('./models/Booking');
+const Booking = require("./models/Booking");
+const Resident = require("./models/Resident");
 const { userInfo } = require("os");
 
 const app = express();
@@ -52,12 +53,13 @@ console.log("Generated Secret Key:", secretKey);
 //   });
 // }
 function authenticateToken(req, res, next) {
-  const authHeader = req.header('Authorization');
-  const token = authHeader && authHeader.split(' ')[1];
-  if (!token) return res.status(401).json({ message: 'Token is missing or invalid' });
+  const authHeader = req.header("Authorization");
+  const token = authHeader && authHeader.split(" ")[1];
+  if (!token)
+    return res.status(401).json({ message: "Token is missing or invalid" });
 
   jwt.verify(token, secretKey, (err, person) => {
-    if (err) return res.status(403).json({ message: 'Access is Restricted' });
+    if (err) return res.status(403).json({ message: "Access is Restricted" });
     req.person = person;
     next();
   });
@@ -147,6 +149,7 @@ app.get("/userInfo", authenticateToken, (req, res) => {
       if (user) {
         // If user is found, return their information
         const userInfo = {
+          User_id: user._id,
           fname: user.fname,
           lname: user.lname,
           phone: user.phone,
@@ -500,69 +503,108 @@ app.get("/AddRooms", (req, res) => {
     });
 });
 
-app.post('/bookingRequest', authenticateToken, async (req, res) => {
+app.post("/bookingRequest", authenticateToken, async (req, res) => {
   try {
     // Extract the booking request data from the request body
     const { hostelInfo, userInfo, id } = req.body;
 
     // Fetch the hostel details based on hostelId
-    AddRoomsModel.findById(id)
-      .then(async (Room) => { // Declare the arrow function as async
-        if (!Room) {
-          return res.status(404).json({ message: "Hostel not found" });
-        }
+    AddRoomsModel.findById(id).then(async (Room) => {
+      // Declare the arrow function as async
+      if (!Room) {
+        return res.status(404).json({ message: "Hostel not found" });
+      }
 
-        // Create a new booking instance based on the schema
-        const newBooking = new Booking({
-          RoomID: Room.id,
-          hostelName: hostelInfo.hostelName,
-          hostelLocation: hostelInfo.hostelLocation,
-          roomNo: hostelInfo.RoomNo,
-          roomBed: hostelInfo.RoomBed,
-          roomType: hostelInfo.RoomType,
-          roomDescription: hostelInfo.RoomDescription,
-          roomPrice: hostelInfo.RoomPrice,
-          image: hostelInfo.image,
-          userEmail: userInfo.email,
-          userName: `${userInfo.fname} ${userInfo.lname}`,
-          userPhone: userInfo.phone
-        });
-
-        // Save the new booking to the database
-        await newBooking.save();
-
-        // Send a success response back to the client
-        res.status(201).json({
-          message: 'Booking request received successfully',
-          data: newBooking,
-        });
+      // Create a new booking instance based on the schema
+      const newBooking = new Booking({
+        RoomID: Room.id,
+        HostelID: hostelInfo.hostel,
+        hostelName: hostelInfo.hostelName,
+        hostelLocation: hostelInfo.hostelLocation,
+        roomNo: hostelInfo.RoomNo,
+        roomBed: hostelInfo.RoomBed,
+        roomType: hostelInfo.RoomType,
+        roomDescription: hostelInfo.RoomDescription,
+        roomPrice: hostelInfo.RoomPrice,
+        image: hostelInfo.image,
+        User_id: userInfo.User_id,
+        userEmail: userInfo.email,
+        userName: `${userInfo.fname} ${userInfo.lname}`,
+        userPhone: userInfo.phone,
       });
+
+      // Save the new booking to the database
+      await newBooking.save();
+
+      // Send a success response back to the client
+      res.status(201).json({
+        message: "Booking request received successfully",
+        data: newBooking,
+      });
+    });
   } catch (error) {
     // If an error occurs, send an error response
-    console.error('Error processing booking request:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    console.error("Error processing booking request:", error);
+    res.status(500).json({ error: "Internal server error" });
   }
 });
+app.get("/bookingRequest", (req, res) => {
+  Booking.find({})
+    .then((book) => res.json(book))
+    .catch((err) => res.json(err));
+});
 
-app.get('/bookingStatus/:id', async (req, res) => {
+
+app.delete("/RejectBooking/:id", (req, res) => {
+  const id = req.params.id;
+  Booking.findByIdAndDelete(id)
+    .then(() => res.json({ success: true }))
+    .catch((err) => res.status(500).json({ success: false, error: err }));
+});
+
+app.get("/bookingStatus/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    
+
     // Replace this logic with your actual logic to check booking status
     // For demonstration purposes, I'm assuming you have some database model named Booking
     const booking = await Booking.findOne({ hostelId: id });
-    
+
     if (booking) {
       res.status(200).json({ status: booking.status }); // Return the status if booking exists
     } else {
-      res.status(404).json({ message: 'Booking not found' }); // Return a message if booking does not exist
+      res.status(404).json({ message: "Booking not found" }); // Return a message if booking does not exist
     }
   } catch (error) {
-    console.error('Error checking booking status:', error);
-    res.status(500).json({ error: 'Internal server error' }); // Return an error response if an error occurs
+    console.error("Error checking booking status:", error);
+    res.status(500).json({ error: "Internal server error" }); // Return an error response if an error occurs
   }
 });
 
+app.post("/ResidentLists", (req, res) => {
+  const newResidentData = req.body;
+
+  // Update the status to 'Active' in the booking data
+  newResidentData.status = "Active";
+
+  // Generate a unique ObjectId for the new document
+  newResidentData._id = new ObjectId();
+
+  Resident.create(newResidentData)
+    .then((result) => res.json(result))
+    .catch((err) => {
+      console.error("Error adding data to Resident:", err); // Log the error details
+      res
+        .status(500)
+        .json({ error: "Internal Server Error", details: err.message }); // Respond with error details
+    });
+});
+
+app.get("/ResidentLists", (req, res) => {
+  Resident.find({})
+    .then((Resi) => res.json(Resi))
+    .catch((err) => res.json(err));
+});
 
 app.listen(3001, () => {
   console.log("server is running");

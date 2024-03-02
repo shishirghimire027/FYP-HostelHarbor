@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import BookHostelInfo from "./BookHostelInfo";
 import BookUserInfo from "./BookUserInfo";
 import BookRoomInfo from "./BookRoomInfo";
@@ -9,34 +9,6 @@ import { useParams } from "react-router-dom";
 function BookHostel() {
   const { id } = useParams();
   const [showAlert, setShowAlert] = useState(false);
-  const [isButtonDisabled, setIsButtonDisabled] = useState(false);
-
-  useEffect(() => {
-    const checkBookingStatus = async () => {
-      try {
-        const token = localStorage.getItem("token");
-        const response = await axios.get(`http://localhost:3001/bookingStatus/${id}`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        if (response.status === 200) {
-          setIsButtonDisabled(true); // Disable the button if booking data is present
-        }
-      } catch (error) {
-        console.error("Error checking booking status:", error);
-      }
-    };
-
-    // Check booking status when the component mounts
-    checkBookingStatus();
-
-    // Check booking status from local storage
-    const bookingStatusFromLocalStorage = localStorage.getItem(`bookingStatus_${id}`);
-    if (bookingStatusFromLocalStorage === 'pending') {
-      setIsButtonDisabled(true);
-    }
-  }, [id]);
 
   const handleConfirmClick = async () => {
     // Get user information from BookUserInfo component
@@ -70,9 +42,6 @@ function BookHostel() {
 
       console.log("Booking request submitted successfully:", response.data);
       setShowAlert(true);
-      setIsButtonDisabled(true); // Disable the button after successful booking
-      // Store the booking status in local storage
-      localStorage.setItem(`bookingStatus_${id}`, 'pending');
     } catch (error) {
       console.error("Error submitting booking request:", error);
     }
@@ -131,8 +100,7 @@ function BookHostel() {
         <button
           className="btn btn-success"
           onClick={handleConfirmClick}
-          disabled={isButtonDisabled}
-          title={isButtonDisabled ? "Booking already requested" : "Confirm Booking"}
+          title="Confirm Booking"
         >
           Confirm
         </button>

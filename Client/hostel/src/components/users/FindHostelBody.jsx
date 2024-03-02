@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Link, useParams } from "react-router-dom";
 
-function YourHostelBody() {
+function FindHostelBody() {
   
   const [hostels, setHostels] = useState([]);
   const [refresh, setRefresh] = useState(false);
@@ -49,4 +49,4 @@ function YourHostelBody() {
   );
 }
 
-export default YourHostelBody;
+export default FindHostelBody;

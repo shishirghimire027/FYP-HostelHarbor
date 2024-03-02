@@ -1,12 +1,13 @@
 import React from 'react'
 import Navbar from '../components/users/Navbar'
-import YourHostelBody from '../components/users/YourHostelBody'
+import UserHostel from '../components/userHostel/UserHostel'
+
 
 function YourHostel() {
   return (
     <div>
-        <Navbar />
-        <YourHostelBody />
+      <Navbar />
+      <UserHostel />
       
     </div>
   )

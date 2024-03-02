@@ -13,7 +13,6 @@ import "../../pages/Manager.css";
 
 function ManagerSidebar({ openSidebarToggle, OpenSidebar }) {
   // State to manage modal visibility
-  
 
   // Function to handle logout
   const handleLogout = () => {
@@ -57,7 +56,7 @@ function ManagerSidebar({ openSidebarToggle, OpenSidebar }) {
           </a>
         </li>
         <li className="sidebar-list-item">
-          <a href="/">
+          <a href="/ManagerManageBooking">
             <BsCalendar className="icon" /> Manage Booking
           </a>
         </li>

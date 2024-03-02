@@ -32,6 +32,7 @@ const BookHostelInfo = () => {
           </div>
           <div className="col">
             <p className="mb-0">Hostel Name: {rooms.hostelName} </p>
+            
           </div>
         </div>
         <div className="row border-bottom pb-2 mb-2 align-items-center">
