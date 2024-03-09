@@ -8,6 +8,8 @@ const fs = require("fs");
 const jwt = require("jsonwebtoken");
 const cookieParsar = require("cookie-parser");
 const crypto = require("crypto");
+const http = require("http");
+const {Server} = require("socket.io");
 
 const HostelModel = require("./models/Hostel");
 const AddHostelsModel = require("./models/Addhostels");
@@ -15,6 +17,8 @@ const HostelListsModel = require("./models/HostelLists");
 const AddRoomsModel = require("./models/AddRooms");
 const Booking = require("./models/Booking");
 const Resident = require("./models/Resident");
+
+
 const { userInfo } = require("os");
 
 const app = express();
@@ -27,6 +31,40 @@ app.use(
   })
 );
 app.use(cookieParsar());
+
+//creating server
+const server = http.createServer(app);
+const io = new Server(server, {
+  cors: {
+    origin: "http://localhost:3000",
+    methods: ["GET", "POST", "DELETE", "PUT"],
+    credentials: true,
+  },
+});
+const { saveMessage, fetchMessages } = require('./models/dbOperations');
+
+io.on("connection", (socket) => {
+  console.log(`User Connected: ${socket.id}`);
+
+  socket.on("join_room", (data) => {
+    socket.join(data);
+    console.log(`User with Id: ${socket.id} joined room: ${data}`);
+  });
+
+  socket.on('send_message', async (data) => {
+    const success = await saveMessage(data);
+    if (success) {
+      // Emit the message to all users in the room, including the sender
+      io.in(data.room).emit('receive_message', data);
+    }
+  });
+
+  socket.on("disconnect", () => {
+    console.log("User Disconnected", socket.id);
+  });
+});
+
+
 
 app.use(
   "/images",
@@ -554,6 +592,18 @@ app.get("/bookingRequest", (req, res) => {
     .catch((err) => res.json(err));
 });
 
+app.delete("/bookingRequest/:userId", async (req, res) => {
+  const userId = req.params.userId;
+
+  try {
+    // Delete all booking requests associated with the user
+    const result = await Booking.deleteMany({ User_id: userId });
+    res.status(200).json({ message: "Booking requests deleted successfully" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
 
 app.delete("/RejectBooking/:id", (req, res) => {
   const id = req.params.id;
@@ -606,6 +656,72 @@ app.get("/ResidentLists", (req, res) => {
     .catch((err) => res.json(err));
 });
 
-app.listen(3001, () => {
+// // Endpoint to store a new chat message
+// app.post('/store-message', (req, res) => {
+//   const { author, message, room } = req.body;
+
+//   // Store message in MongoDB  database
+ 
+//   const newMessage = new Message({
+//     author,
+//     message,
+//     room,
+//     timestamp: new Date()
+//   });
+//   newMessage.save()
+//     .then(() => {
+//       res.status(201).send('Message stored successfully');
+//     })
+//     .catch((error) => {
+//       console.error('Error storing message:', error);
+//       res.status(500).send('Internal Server Error');
+//     });
+// });
+
+// // Endpoint to retrieve chat history for a specific room
+// app.get('/chat-history/:room', (req, res) => {
+//   const room = req.params.room;
+
+//   // Retrieve chat history from the database for the specified room
+
+//   Message.find({ room })
+//     .then((messages) => {
+//       res.json(messages);
+//     })
+//     .catch((error) => {
+//       console.error('Error retrieving chat history:', error);
+//       res.status(500).send('Internal Server Error');
+//     });
+// });
+
+
+// Route to fetch previous messages
+app.post('/fetch_messages', async (req, res) => {
+  const { room } = req.body;
+  try {
+    const messages = await fetchMessages(room);
+    res.json(messages);
+  } catch (error) {
+    console.error('Error fetching messages:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+// Define a route for sending messages
+// Define a route for sending messages
+app.post('/send_message', async (req, res) => {
+  try {
+    const messageData = req.body; // Retrieve message data from request body
+    // Process and save the message data here...
+    res.status(200).send('Message sent successfully');
+  } catch (error) {
+    console.error('Error sending message:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+
+
+
+server.listen(3001, () => {
   console.log("server is running");
 });

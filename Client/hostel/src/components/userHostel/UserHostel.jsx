@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { jwtDecode } from 'jwt-decode';
-import PendingRequest from './PendingRequest'
+import { jwtDecode } from "jwt-decode";
+import PendingRequest from "./PendingRequest";
+import ChatInterface from "./ChatInterface";
 
 function UserHostel() {
   const [res, setRes] = useState([]);
@@ -48,22 +49,28 @@ function UserHostel() {
         style={{ padding: "2%", border: "1px solid #dee2e6" }}
       >
         {res.map((hostel, index) => (
-          <div key={index} className="row border-bottom pb-2 mb-2 align-items-center">
+          <div
+            key={index}
+            className="row border-bottom pb-2 mb-2 align-items-center"
+          >
             <div className="col-1 text-center">
               {/* <BsPersonLinesFill className="icon" /> */}
             </div>
             <div className="col">
-              <p className="mb-0">
-                Hostel Name: {hostel.hostelName}
-              </p>
+              <p className="mb-0">Hostel Name: {hostel.hostelName}</p>
             </div>
           </div>
         ))}
       </div>
+      <div className="chat-box">
+        <ChatInterface />
+      </div>
     </main>
   ) : (
-    <div><PendingRequest /></div>
+    <div>
+      <PendingRequest />
+    </div>
   );
-};
+}
 
 export default UserHostel;

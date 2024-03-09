@@ -48,7 +48,6 @@ import EditRoom from "./components/managerdash/EditRoom";
 import UpdateImage from "./components/managerdash/UpdateImage";
 import ManageBooking from "./components/managerdash/ManageBooking";
 
-
 import VisitHostel from "./components/users/VisitHostel";
 import HostelData from "./components/managerdash/HostelData";
 import UserData from "./components/users/UserData";
@@ -60,6 +59,8 @@ import BookRoomInfo from "./components/users/BookRoomInfo";
 import ManagerManageBooking from "./pages/Manager/ManagerManageBooking";
 import UserHostel from "./components/userHostel/UserHostel";
 import PendingRequest from "./components/userHostel/PendingRequest";
+import ChatInterface from "./components/userHostel/ChatInterface";
+import ManagerChatInterface from "./components/managerdash/ManagerChatInterface";
 
 function App() {
   return (
@@ -78,15 +79,15 @@ function App() {
           <Route path="/signup" element={<Signup />} />
           <Route path="/HostelReg" element={<HostelReg />} />
           <Route path="/UserData" element={<UserData />} />
+
           <Route path="/UserHostel" element={<UserHostel />} />
-          <Route path="/PendingRequest" element={<PendingRequest />}/>
+          <Route path="/PendingRequest" element={<PendingRequest />} />
+          <Route path="/ChatInterface" element={<ChatInterface />} />
 
           <Route path="/BookHostel/:id" element={<BookHostel />} />
           <Route path="/BookHostelInfo" element={<BookHostelInfo />} />
           <Route path="/BookUserInfo" element={<BookUserInfo />} />
           <Route path="/BookRoomInfo" element={<BookRoomInfo />} />
-
-
 
           <Route path="/Admin" element={<Admin />} />
           <Route path="/AdminAddHostel" element={<AdminAddHostel />} />
@@ -106,10 +107,14 @@ function App() {
           <Route path="/EditRoom/:id" element={<EditRoom />} />
           <Route path="/UpdateImage/:id" element={<UpdateImage />} />
           <Route path="/ManagerManageRoom" element={<ManagerManageRoom />} />
-          <Route path="/ManagerManageBooking" element={<ManagerManageBooking />} />
+          <Route path="/ManagerChatInterface" element={<ManagerChatInterface />} />
+
+          <Route
+            path="/ManagerManageBooking"
+            element={<ManagerManageBooking />}
+          />
           <Route path="/ManageBooking" element={<ManageBooking />} />
           <Route path="/HostelData" element={<HostelData />} />
-
 
           <Route path="/AddHostel" element={<AddHostel />} />
           <Route path="/HostelList" element={<HostelList />} />

@@ -37,6 +37,29 @@ function ManageBooking() {
       .catch((errr) => console.log(errr));
   };
 
+  // const addToResidentLists = (selectedRow) => {
+  //   if (selectedRow) {
+  //     axios
+  //       .post("http://localhost:3001/ResidentLists", selectedRow)
+  //       .then((res) => {
+  //         console.log(res);
+  //         // Remove the sent row from the booking array
+  //         setBooking(booking.filter((book) => book._id !== selectedRow._id));
+  //         // Delete the sent row from the AddHostel collection
+  //         axios
+  //           .delete("http://localhost:3001/RejectBooking/" + selectedRow._id)
+  //           .then((deleteRes) => {
+  //             console.log(deleteRes);
+  //             // Refresh the hostels array after deletion
+  //             setRefresh(!refresh);
+  //           })
+  //           .catch((deleteErr) => console.log(deleteErr));
+  //       })
+  //       .catch((err) => console.log(err));
+  //   } else {
+  //     console.log("No row selected");
+  //   }
+  // };
   const addToResidentLists = (selectedRow) => {
     if (selectedRow) {
       axios
@@ -45,9 +68,11 @@ function ManageBooking() {
           console.log(res);
           // Remove the sent row from the booking array
           setBooking(booking.filter((book) => book._id !== selectedRow._id));
-          // Delete the sent row from the AddHostel collection
+          
+          // Delete all booking requests of the particular user
+          const userId = selectedRow.User_id; // Assuming User_id is the field that stores the user's ID
           axios
-            .delete("http://localhost:3001/RejectBooking/" + selectedRow._id)
+            .delete(`http://localhost:3001/bookingRequest/${userId}`)
             .then((deleteRes) => {
               console.log(deleteRes);
               // Refresh the hostels array after deletion
@@ -60,6 +85,7 @@ function ManageBooking() {
       console.log("No row selected");
     }
   };
+  
 
   return (
     <div className="d-flex justify-content-center align-items-center main-container ">

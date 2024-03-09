@@ -14,6 +14,7 @@ const residentSchema = new mongoose.Schema({
     type: String,
     required: true
   },
+  
   hostelLocation: {
     type: String,
     required: true
