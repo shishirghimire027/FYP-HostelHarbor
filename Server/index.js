@@ -46,16 +46,26 @@ const { saveMessage, fetchMessages } = require('./models/dbOperations');
 io.on("connection", (socket) => {
   console.log(`User Connected: ${socket.id}`);
 
-  socket.on("join_room", (data) => {
+  // socket.on("join_room", (data) => {
+  //   socket.join(data);
+  //   console.log(`User with Id: ${socket.id} joined room: ${data}`);
+    
+  // });
+  socket.on("join_room", async (data) => {
     socket.join(data);
     console.log(`User with Id: ${socket.id} joined room: ${data}`);
+  
+    // Fetch previous messages for the room from the database
+    const messages = await fetchMessages(data);
+    // Emit the previous messages to the user who joined the room
+    socket.emit('receive_previous_messages', messages);
   });
 
   socket.on('send_message', async (data) => {
     const success = await saveMessage(data);
     if (success) {
-      // Emit the message to all users in the room, including the sender
-      io.in(data.room).emit('receive_message', data);
+      // Emit the message to all connected users
+      io.emit('receive_message', data);
     }
   });
 
@@ -708,16 +718,23 @@ app.post('/fetch_messages', async (req, res) => {
 });
 // Define a route for sending messages
 // Define a route for sending messages
+// Define a route for sending messages
 app.post('/send_message', async (req, res) => {
   try {
     const messageData = req.body; // Retrieve message data from request body
     // Process and save the message data here...
-    res.status(200).send('Message sent successfully');
+    const success = await saveMessage(messageData);
+    if (success) {
+      res.status(200).send('Message sent successfully');
+    } else {
+      res.status(500).json({ error: 'Failed to save message' });
+    }
   } catch (error) {
     console.error('Error sending message:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
+
 
 
 

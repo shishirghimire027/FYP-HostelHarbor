@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import ScrollToBottom from "react-scroll-to-bottom";
 import { RiCloseCircleLine } from "react-icons/ri";
-import axios from 'axios';
+// import axios from 'axios';
 
 function Chat({ socket, username, room, onClose }) {
   const [currentMessage, setCurrentMessage] = useState("");
@@ -24,33 +24,39 @@ function Chat({ socket, username, room, onClose }) {
         room: room,
         author: username,
         message: currentMessage,
-        time: new Date(Date.now()).getHours() + ":" + new Date(Date.now()).getMinutes(),
+        time:
+          new Date(Date.now()).getHours() +
+          ":" +
+          new Date(Date.now()).getMinutes(),
       };
 
       await socket.emit("send_message", messageData);
-
-      // Add the message to the list immediately for display
-      setMessageList(prevMessages => [...prevMessages, messageData]);
 
       setCurrentMessage("");
     }
   };
 
-  useEffect(() => {
-    axios.post('/fetch_messages', { room })
-      .then(response => {
-        setMessageList(response.data);
-      })
-      .catch(error => {
-        console.error('Error fetching messages:', error);
-      });
+  // useEffect(() => {
+  //   socket.on("receive_message", (data) => {
+  //     setMessageList(prevMessages => [...prevMessages, data]);
+  //   });
 
+  //   return () => {
+  //     socket.off("receive_message");
+  //   };
+  // }, [socket, room]);
+  useEffect(() => {
     socket.on("receive_message", (data) => {
-      setMessageList(prevMessages => [...prevMessages, data]);
+      setMessageList((prevMessages) => [...prevMessages, data]);
+    });
+
+    socket.on("receive_previous_messages", (messages) => {
+      setMessageList(messages);
     });
 
     return () => {
       socket.off("receive_message");
+      socket.off("receive_previous_messages");
     };
   }, [socket, room]);
 
@@ -63,8 +69,19 @@ function Chat({ socket, username, room, onClose }) {
       <div className="chat-header">
         <p>
           Live Chat
-          <button onClick={handleCloseChat} style={{ border: "none", background: "none", cursor: "pointer" }}>
-            <RiCloseCircleLine style={{ height: "30px", width: "30px", color: "red", marginTop: "0", marginLeft: "500%" }} />
+          <button
+            onClick={handleCloseChat}
+            style={{ border: "none", background: "none", cursor: "pointer" }}
+          >
+            <RiCloseCircleLine
+              style={{
+                height: "30px",
+                width: "30px",
+                color: "red",
+                marginTop: "0",
+                marginLeft: "500%",
+              }}
+            />
           </button>
         </p>
       </div>

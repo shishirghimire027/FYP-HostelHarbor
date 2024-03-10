@@ -5,18 +5,19 @@ import io from "socket.io-client";
 import Chat from "../userHostel/Chat";
 import "../userHostel/Chat.css";
 
-
 const socket = io.connect("http://localhost:3001");
 
-function ManagerChatInterface() {
+function ChatInterface() {
   const [username, setUsername] = useState("");
-  const [room, setRoom] = useState(""); // Keep room state even if not displayed
+  const [room, setRoom] = useState("");
   const [showChat, setShowChat] = useState(false);
 
   const joinRoom = () => {
     if (username !== "" && room !== "") {
       socket.emit("join_room", room);
       setShowChat(true);
+    } else {
+      console.error("Username or room is empty.");
     }
   };
 
@@ -44,7 +45,7 @@ function ManagerChatInterface() {
         console.error("Error fetching user data:", err);
       });
   }, []);
-  
+
   const handleCloseChat = () => {
     setShowChat(false);
   };
@@ -70,13 +71,10 @@ function ManagerChatInterface() {
           </button>
         </div>
       ) : (
-        <div>
-          {/* <button onClick={handleCloseChat} ></button> */}
-          <Chat socket={socket} username={username} room={room} onClose={handleCloseChat} />
-        </div>
+        <Chat socket={socket} username={username} room={room} onClose={handleCloseChat} />
       )}
     </div>
   );
 }
 
-export default ManagerChatInterface;
+export default ChatInterface;
