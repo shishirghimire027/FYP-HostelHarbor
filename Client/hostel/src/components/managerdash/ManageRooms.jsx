@@ -2,10 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import "../../pages/Manager.css";
 import axios from "axios";
-import { jwtDecode } from 'jwt-decode';
-
-
-
+import { jwtDecode } from "jwt-decode";
 
 function ManageRoom() {
   const [rooms, setRooms] = useState([]);
@@ -53,6 +50,31 @@ function ManageRoom() {
       .catch((err) => console.log(err));
   };
 
+  // const MarkBook = (id) => {
+  //   axios
+  //     .put(`http://localhost:3001/MarkBooked/${id}`)
+  //     .then((res) => {
+  //       if (res.data.success) {
+  //         setRefresh(!refresh); // Refresh the room list
+  //       } else {
+  //         console.error("Marking as booked failed");
+  //       }
+  //     })
+  //     .catch((err) => console.log(err));
+  // };
+  const toggleStatus = (id, currentStatus) => {
+    const newStatus = currentStatus === 'available' ? 'booked' : 'available';
+    axios.put(`http://localhost:3001/ToggleStatus/${id}`, { status: newStatus })
+      .then((res) => {
+        if (res.data.success) {
+          setRefresh(!refresh);
+        } else {
+          console.error("Toggle status failed");
+        }
+      })
+      .catch((err) => console.log(err));
+  };
+
   return (
     <main className="main-container">
       <div className="main-cards">
@@ -65,9 +87,10 @@ function ManageRoom() {
           >
             <div className="card-inner row">
               <h6>Room No: {room.RoomNo}</h6>
-              <h6>Seater: {room.RoomBed}</h6>
+              <h6>Seater: {room.Seater}</h6>
               <h6>Room Type: {room.RoomType}</h6>
               <h6>Price: {room.RoomPrice}</h6>
+              <h6>Status: {room.status.toUpperCase()}</h6>
               <Link to={`/UpdateRoom/${room._id}`} className="btn btn-success">
                 Edit Room
               </Link>
@@ -77,6 +100,12 @@ function ManageRoom() {
               >
                 Delete Room
               </button>
+              <button
+              className="btn btn-success"
+              onClick={() => toggleStatus(room._id, room.status)}
+            >
+              {room.status === 'available' ? 'Mark as Booked' : 'Mark as Available'}
+            </button>
             </div>
           </div>
         ))}

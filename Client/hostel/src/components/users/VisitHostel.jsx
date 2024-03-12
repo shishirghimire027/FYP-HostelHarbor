@@ -26,11 +26,22 @@ function VisitHostel() {
       })
       .catch((err) => console.log(err));
 
+    //   axios
+    //     .get("http://localhost:3001/AddRooms")
+    //     .then((result) => {
+    //       // Filter rooms based on hostel ID
+    //       const filteredRooms = result.data.filter((room) => room.hostel === id);
+    //       setRooms(filteredRooms);
+    //     })
+    //     .catch((err) => console.log(err));
+    // }, [id, refresh]);
     axios
       .get("http://localhost:3001/AddRooms")
       .then((result) => {
-        // Filter rooms based on hostel ID
-        const filteredRooms = result.data.filter((room) => room.hostel === id);
+        // Filter rooms based on hostel ID and status
+        const filteredRooms = result.data.filter(
+          (room) => room.hostel === id && room.status === "available"
+        );
         setRooms(filteredRooms);
       })
       .catch((err) => console.log(err));
@@ -111,7 +122,7 @@ function VisitHostel() {
         </div>
       </div>
       <div className="container-right mt-5 border" style={{ width: "60%" }}>
-        <h1>Rooms</h1>
+        <h1>Available Rooms</h1>
         <div
           className="main-cards"
           style={{ display: "flex", flexWrap: "wrap" }}

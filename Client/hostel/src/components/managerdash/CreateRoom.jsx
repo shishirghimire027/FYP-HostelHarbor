@@ -7,6 +7,7 @@ import { jwtDecode } from "jwt-decode"; // Import jwtDecode from jwt-decode
 function CreateRoom() {
   const [RoomNo, setRoomNo] = useState();
   const [RoomBed, setRoomBed] = useState();
+  const [Seater, setSeater] = useState();
   const [RoomType, setRoomType] = useState();
   const [RoomDescription, setRoomDescription] = useState();
   const [RoomPrice, setRoomPrice] = useState();
@@ -32,6 +33,7 @@ function CreateRoom() {
     const formData = new FormData();
     formData.append("RoomNo", RoomNo);
     formData.append("RoomBed", RoomBed);
+    formData.append("Seater", Seater);
     formData.append("RoomType", RoomType);
     formData.append("RoomDescription", RoomDescription);
     formData.append("RoomPrice", RoomPrice);
@@ -68,12 +70,28 @@ function CreateRoom() {
           </div>
           <div className="mb-3">
             <label htmlFor="RoomBed" className="form-label">
-              Total Beds
+            Available Beds
             </label>
             <select
               className="form-select"
               aria-label="Hostel Location"
               onChange={(e) => setRoomBed(e.target.value)}
+            >
+              <option defaultValue>Available Bed</option>
+              <option>1</option>
+              <option>2</option>
+              <option>3</option>
+              <option>4</option>
+            </select>
+          </div>
+          <div className="mb-3">
+            <label htmlFor="RoomBed" className="form-label">
+            Total Beds
+            </label>
+            <select
+              className="form-select"
+              aria-label="Hostel Location"
+              onChange={(e) => setSeater(e.target.value)}
             >
               <option defaultValue>Total Bed</option>
               <option>1</option>

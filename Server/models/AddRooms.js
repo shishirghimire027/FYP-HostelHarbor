@@ -24,10 +24,15 @@ const AddRoomsSchema = new mongoose.Schema(
   {
     RoomNo: Number,
     RoomBed: String,
+    Seater: String,
     RoomType: String,
     RoomDescription: String,
     RoomPrice: Number,
     image: String,
+    status: {
+      type: String,
+      default: 'available'
+    },
     hostel: { 
       type: mongoose.Schema.Types.ObjectId, 
       ref: "HostelLists" // Reference to HostelLists model

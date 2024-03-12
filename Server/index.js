@@ -447,7 +447,7 @@ const upload = multer({
 // });
 app.post("/CreateRoom", upload.single("file"), (req, res) => {
   console.log(req.file);
-  const { RoomNo, RoomBed, RoomType, RoomDescription, RoomPrice, hostelId } =
+  const { RoomNo, RoomBed, Seater, RoomType, RoomDescription, RoomPrice, hostelId } =
     req.body;
   const image = req.file.filename;
 
@@ -461,6 +461,7 @@ app.post("/CreateRoom", upload.single("file"), (req, res) => {
       AddRoomsModel.create({
         RoomNo,
         RoomBed,
+        Seater,
         RoomType,
         RoomDescription,
         RoomPrice,
@@ -481,6 +482,27 @@ app.delete("/DeleteRoom/:id", (req, res) => {
     .then(() => res.json({ success: true }))
     .catch((err) => res.status(500).json({ success: false, error: err }));
 });
+
+// app.put("/MarkBooked/:id", (req, res) => {
+//   const roomId = req.params.id;
+//   AddRoomsModel.findByIdAndUpdate(roomId, { status: 'booked' })
+//     .then(() => res.json({ success: true }))
+//     .catch((err) => {
+//       console.error("Error marking room as booked:", err);
+//       res.json({ success: false });
+//     });
+// });
+app.put("/ToggleStatus/:id", (req, res) => {
+  const roomId = req.params.id;
+  const { status } = req.body;
+  AddRoomsModel.findByIdAndUpdate(roomId, { status })
+    .then(() => res.json({ success: true }))
+    .catch((err) => {
+      console.error("Error toggling room status:", err);
+      res.json({ success: false });
+    });
+});
+
 
 app.get("/AddRooms", (req, res) => {
   AddRoomsModel.find({})
