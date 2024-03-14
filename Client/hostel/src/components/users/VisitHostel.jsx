@@ -11,6 +11,7 @@ import {
 } from "react-icons/bs";
 import { FaBed } from "react-icons/fa";
 import { FaMoneyBillWave } from "react-icons/fa6";
+import { MdMeetingRoom } from "react-icons/md";
 
 function VisitHostel() {
   const { id } = useParams();
@@ -154,8 +155,8 @@ function VisitHostel() {
                     className="img-fluid mb-3"
                     style={{ maxHeight: "200px" }}
                   />
-                  <h6 className="text-center">Room No: {room.RoomNo}</h6>
-                  <div
+{/*                   
+                  <div className="row"
                     style={{
                       display: "flex",
                       alignItems: "center",
@@ -163,21 +164,41 @@ function VisitHostel() {
                       marginTop: "10px",
                     }}
                   >
+                    <h6 style={{ margin: "0", marginLeft: "10px" }}><MdMeetingRoom className="icon"/>Room No: {room.RoomNo}</h6>
                     <h6 style={{ margin: "0", marginLeft: "10px" }}>
-                      <FaBed className="icon" />: {room.RoomBed}
+                      <FaBed className="icon" /> (Available): {room.RoomBed}
                     </h6>
-                    <h6
-                      style={{
-                        color: "red",
-                        fontSize: "14px",
-                        margin: "0 0 0 50px",
-                      }}
-                    >
-                      {" "}
-                      <FaMoneyBillWave className="icon" />
-                      Rs.{room.RoomPrice}/-
+                    <h6 style={{ margin: "0", marginLeft: "10px" }}>
+                      <FaBed className="icon" /> (Seater): {room.Seater}
                     </h6>
-                  </div>
+                 
+                  </div> */}
+                  <table className="hostel-tables" >
+            <tbody >
+              <tr >
+                <td className="table-labels">
+                  <MdMeetingRoom className="icon" />
+                  Room No:
+                </td>
+                <td style={{fontWeight:"normal"}}>{room ? room.RoomNo : ""}</td>
+              </tr>
+              <tr>
+                <td className="table-labels">
+                  <FaBed className="icon" />
+                  Seater:
+                </td>
+                <td style={{fontWeight:"normal"}}>{room ? room.Seater : ""}</td>
+              </tr>
+              <tr>
+                <td className="table-labels">
+                  <FaBed className="icon" />
+                  Available:
+                </td>
+                <td style={{fontWeight:"normal"}}>{room ? room.RoomBed : ""}</td>
+              </tr>
+             
+            </tbody>
+          </table>
                 </div>
                 <div>
                   <Link className="btn btn-info border">See More</Link>

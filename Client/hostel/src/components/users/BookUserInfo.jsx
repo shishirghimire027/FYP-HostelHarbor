@@ -1,55 +1,91 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { BsPersonLinesFill, BsTelephone, BsEnvelope } from "react-icons/bs";
+import { BsPersonLinesFill, BsTelephone, BsEnvelope, BsPencilSquare,BsCheck2Square } from "react-icons/bs";
+import { MdOutlineCancelPresentation } from "react-icons/md";
 
 const BookUserInfo = () => {
-  // State to store user information
   const [userInfo, setUserInfo] = useState(null);
+  const [editMode, setEditMode] = useState(false);
+  const [editedUserInfo, setEditedUserInfo] = useState({});
 
-  // Effect hook to fetch user's information when the component mounts
   useEffect(() => {
-    // Function to fetch user's information
     const fetchUserInfo = async () => {
       try {
-        // Retrieve the token from localStorage or sessionStorage
-        const token = localStorage.getItem("token"); // Adjust based on where you store the token
-        console.log("Token:", token);
-
-        // Make a GET request with the token included in the authorization header
+        const token = localStorage.getItem("token");
         const response = await axios.get("http://localhost:3001/userInfo", {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
-
-        // Set the userInfo state with the fetched data
         setUserInfo(response.data);
+        setEditedUserInfo(response.data);
       } catch (error) {
         console.error("Error fetching user information:", error);
       }
     };
-
-    // Call the fetchUserInfo function
     fetchUserInfo();
   }, []);
 
-  // Render the component only when userInfo is not null
+  const handleEdit = () => {
+    setEditMode(!editMode); // Toggle edit mode
+  };
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+
+    setEditedUserInfo((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const saveChanges = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      await axios.put("http://localhost:3001/userInfo", editedUserInfo, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      setUserInfo(editedUserInfo);
+      setEditMode(false);
+    } catch (error) {
+      console.error("Error updating user information:", error);
+    }
+  };
+
   return userInfo ? (
     <main className="container">
-      <h4>Customer Information</h4>
-      <div
-        className="Upper-Container bg-light mt-2"
-        style={{ padding: "2%", border: "1px solid #dee2e6" }}
-      >
+      <h4>Customer Information
+      <button onClick={handleEdit} style={{float: "right", border: "none", background: "transparent"}}>{editMode ? <MdOutlineCancelPresentation /> : <BsPencilSquare />}</button>
+      {editMode && <button style={{float: "right", border: "none", background: "transparent"}}onClick={saveChanges}><BsCheck2Square /></button>} </h4>
+      <div className="Upper-Container bg-light mt-2" style={{ padding: "2%", border: "1px solid #dee2e6" }}>
         <div className="row border-bottom pb-2 mb-2 align-items-center">
           <div className="col-1 text-center">
             <BsPersonLinesFill className="icon" />
           </div>
           <div className="col">
-            <p className="mb-0">
-             
-              Book to: {userInfo.fname} {userInfo.lname}
-            </p>
+            {editMode ? (
+              <>
+                <input
+                  type="text"
+                  name="fname"
+                  value={editedUserInfo.fname}
+                  onChange={handleInputChange}
+                  placeholder="First Name"
+                />
+                <input
+                  type="text"
+                  name="lname"
+                  value={editedUserInfo.lname}
+                  onChange={handleInputChange}
+                  style={{marginLeft: "10px"}}
+                  placeholder="Last Name"
+                />
+              </>
+            ) : (
+              <p className="mb-0">Book to: {userInfo.fname} {userInfo.lname}</p>
+            )}
           </div>
         </div>
         <div className="row border-bottom pb-2 mb-2 align-items-center">
@@ -57,7 +93,17 @@ const BookUserInfo = () => {
             <BsTelephone className="icon" />
           </div>
           <div className="col">
-            <p className="mb-0">Contact Number: {userInfo.phone}</p>
+            {editMode ? (
+              <input
+                type="text"
+                name="phone"
+                value={editedUserInfo.phone}
+                onChange={handleInputChange}
+                placeholder="Contact Number"
+              />
+            ) : (
+              <p className="mb-0">Contact Number: {userInfo.phone}</p>
+            )}
           </div>
         </div>
         <div className="row align-items-center">
@@ -65,12 +111,22 @@ const BookUserInfo = () => {
             <BsEnvelope className="icon" />
           </div>
           <div className="col">
-            <p className="mb-0">Email: {userInfo.email}</p>
+            {editMode ? (
+              <input
+                type="text"
+                name="email"
+                value={editedUserInfo.email}
+                onChange={handleInputChange}
+                placeholder="Email"
+              />
+            ) : (
+              <p className="mb-0">Email: {userInfo.email}</p>
+            )}
           </div>
         </div>
       </div>
     </main>
-  ) : null; // Render null if userInfo is null
+  ) : null;
 };
 
 export default BookUserInfo;

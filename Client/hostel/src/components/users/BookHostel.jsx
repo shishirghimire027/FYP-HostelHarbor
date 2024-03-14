@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import BookHostelInfo from "./BookHostelInfo";
 import BookUserInfo from "./BookUserInfo";
 import BookRoomInfo from "./BookRoomInfo";
@@ -9,6 +9,26 @@ import { useParams } from "react-router-dom";
 function BookHostel() {
   const { id } = useParams();
   const [showAlert, setShowAlert] = useState(false);
+  const [roomBedOptions, setRoomBedOptions] = useState([]);
+  const [selectedRoomBed, setSelectedRoomBed] = useState("");
+
+  useEffect(() => {
+    fetchRoomBedOptions();
+  }, []);
+
+  const fetchRoomBedOptions = async () => {
+    try {
+      const response = await axios.get(`http://localhost:3001/AddRooms/${id}`);
+      const roomBedData = response.data;
+      const options = Array.from({ length: roomBedData.RoomBed }, (_, index) => ({
+        value: index + 1,
+        label: index + 1
+      }));
+      setRoomBedOptions(options);
+    } catch (error) {
+      console.error("Error fetching room bed options:", error);
+    }
+  };
 
   const handleConfirmClick = async () => {
     // Get user information from BookUserInfo component
@@ -22,7 +42,7 @@ function BookHostel() {
       userInfo,
       hostelInfo,
       id,
-    
+      selectedRoomBed
       // You can include any additional data you want to post
     };
 
@@ -96,11 +116,26 @@ function BookHostel() {
       <BookUserInfo />
       <BookHostelInfo />
       <BookRoomInfo />
+      <div className="form-group">
+        <label htmlFor="roomBedSelect">Select Room Bed:</label>
+        <select
+          id="roomBedSelect"
+          className="form-control"
+          value={selectedRoomBed}
+          onChange={(e) => setSelectedRoomBed(e.target.value)}
+        >
+          <option value="">Select Room Bed</option>
+          {roomBedOptions.map(option => (
+            <option key={option.value} value={option.value}>{option.label}</option>
+          ))}
+        </select>
+      </div>
       <div className="d-flex justify-content-center mt-4">
         <button
           className="btn btn-success"
           onClick={handleConfirmClick}
           title="Confirm Booking"
+          disabled={!selectedRoomBed}
         >
           Confirm
         </button>

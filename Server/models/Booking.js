@@ -54,6 +54,12 @@ const bookingSchema = new mongoose.Schema({
     type: String,
     required: true
   },
+  
+  selectedRoomBedData: {
+    type: Number,
+    required: true
+  },
+ 
   status: {
     type: String,
     default: 'Pending'

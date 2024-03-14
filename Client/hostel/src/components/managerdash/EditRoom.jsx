@@ -7,6 +7,7 @@ function EditRoom() {
   // const [rooms, setRooms] = useState([]);
   const [RoomNo, setRoomNo] = useState("");
   const [RoomBed, setRoomBed] = useState("");
+  const [Seater, setSeater] = useState();
   const [RoomType, setRoomType] = useState("");
   const [RoomDescription, setRoomDescription] = useState("");
   const [RoomPrice, setRoomPrice] = useState("");
@@ -25,6 +26,7 @@ function EditRoom() {
         setRoomType(result.data.RoomType);
         setRoomDescription(result.data.RoomDescription);
         setRoomPrice(result.data.RoomPrice);
+        setSeater(result.data.Seater);
       })
       .catch((err) => console.log(err));
   }, [id]);
@@ -35,6 +37,7 @@ function EditRoom() {
       .put("http://localhost:3001/UpdateRoom/" + id, {
         RoomNo,
         RoomBed,
+        Seater,
         RoomType,
         RoomDescription,
         RoomPrice,
@@ -64,13 +67,30 @@ function EditRoom() {
         </div>
         <div className="mb-3">
           <label htmlFor="RoomBed" className="form-label">
-            Total Beds
+            Available Beds
           </label>
           <select
             className="form-select"
             aria-label="Hostel Location"
             value={RoomBed}
             onChange={(e) => setRoomBed(e.target.value)}
+          >
+            <option defaultValue>Available Bed</option>
+            <option>1</option>
+            <option>2</option>
+            <option>3</option>
+            <option>4</option>
+          </select>
+        </div>
+        <div className="mb-3">
+          <label htmlFor="RoomBed" className="form-label">
+            Total Beds
+          </label>
+          <select
+            className="form-select"
+            aria-label="Hostel Location"
+            value={Seater}
+            onChange={(e) => setSeater(e.target.value)}
           >
             <option defaultValue>Total Bed</option>
             <option>1</option>

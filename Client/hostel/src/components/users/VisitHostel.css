@@ -1,25 +1,44 @@
 .hostel-table {
-    border-collapse: collapse;
-    width: 100%;
-  }
-  
-  .hostel-table td, .hostel-table th {
-    border: 1px solid #dddddd;
-    padding: 8px;
-  }
-  
-  .hostel-table tr:nth-child(even) {
-    background-color: #f2f2f2;
-  }
-  
-  .table-label {
-    font-weight: bold;
-  }
-  .container-left {
-    float: left; /* This will make sure it's on the left */
-  }
-  
-  .container-right {
-    float: right; /* This will make sure it's on the right */
-  }
-    
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.hostel-table td,
+.hostel-table th {
+  border: 1px solid #dddddd;
+  padding: 8px;
+}
+
+.hostel-table tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+.table-label {
+  font-weight: bold;
+}
+.container-left {
+  float: left; /* This will make sure it's on the left */
+}
+
+.container-right {
+  float: right; /* This will make sure it's on the right */
+}
+
+.hostel-tables td,
+.hostel-table th {
+  border: none;
+  padding: 3px;
+}
+.hostel-tables {
+  border-collapse: collapse;
+  width: 70%;
+  margin-bottom: 10px;
+}
+.table-labels {
+  font-weight: normal;
+}
+
+.icon {
+  margin-right: 15px;
+}
+

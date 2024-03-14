@@ -3,6 +3,8 @@ import axios from "axios";
 import { useParams } from "react-router-dom";
 import { BsPersonLinesFill, BsTelephone, BsEnvelope } from "react-icons/bs";
 
+import "./VisitHostel.css"
+
 const BookHostelInfo = () => {
   const { id } = useParams();
   const [rooms, setRooms] = useState([]);
@@ -32,7 +34,6 @@ const BookHostelInfo = () => {
           </div>
           <div className="col">
             <p className="mb-0">Hostel Name: {rooms.hostelName} </p>
-            
           </div>
         </div>
         <div className="row border-bottom pb-2 mb-2 align-items-center">
@@ -56,7 +57,15 @@ const BookHostelInfo = () => {
             <BsTelephone className="icon" />
           </div>
           <div className="col">
-            <p className="mb-0">Seaters: {rooms.RoomBed}</p>
+            <p className="mb-0"> Available Beds: {rooms.RoomBed}</p>
+          </div>
+        </div>
+        <div className="row border-bottom pb-2 mb-2 align-items-center">
+          <div className="col-1 text-center">
+            <BsTelephone className="icon" />
+          </div>
+          <div className="col">
+            <p className="mb-0"> Seater: {rooms.Seater}</p>
           </div>
         </div>
         <div className="row border-bottom pb-2 mb-2 align-items-center">
@@ -77,7 +86,6 @@ const BookHostelInfo = () => {
           </div>
         </div>
       </div>
-      
     </main>
   ) : null; // Render null if userInfo is null
 };

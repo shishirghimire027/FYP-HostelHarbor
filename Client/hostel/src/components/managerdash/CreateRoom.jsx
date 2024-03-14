@@ -134,7 +134,7 @@ function CreateRoom() {
               Room Description
             </label>
             <input
-              type="text"
+              type="textarea"
               className="form-control"
               id="Description"
               aria-describedby="Description"

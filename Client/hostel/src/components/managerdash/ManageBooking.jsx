@@ -93,20 +93,24 @@ function ManageBooking() {
         <table className="table">
           <thead>
             <tr>
+            <th>Room No. (Req)</th>
               <th>Name</th>
               <th>Contact</th>
               <th>Email</th>
-              <th>Room No. (Req)</th>
+              
+              <th>Requested Beds</th>
               <th>Action</th>
             </tr>
           </thead>
           <tbody>
             {booking.map((addbooking) => (
               <tr key={addbooking._id}>
+                <td>{addbooking.roomNo}</td>
                 <td>{addbooking.userName}</td>
                 <td>{addbooking.userPhone}</td>
                 <td>{addbooking.userEmail}</td>
-                <td>{addbooking.roomNo}</td>
+                
+                <td>{addbooking.selectedRoomBedData}</td>
 
                 <td>
                   {/* <Link

@@ -216,6 +216,39 @@ app.get("/userInfo", authenticateToken, (req, res) => {
     });
 });
 
+
+app.put("/userInfo", authenticateToken, async (req, res) => {
+  try {
+    // Access the logged-in user's ID from req.person
+    const userId = req.person.id;
+
+    // Extract updated user info from the request body
+    const { fname, lname, phone, email } = req.body;
+
+    // Query the database to find the user with the provided ID and update their information
+    const updatedUser = await HostelModel.findByIdAndUpdate(userId, { fname, lname, phone, email }, { new: true });
+
+    if (updatedUser) {
+      // If user is found and updated successfully, return their updated information
+      const userInfo = {
+        User_id: updatedUser._id,
+        fname: updatedUser.fname,
+        lname: updatedUser.lname,
+        phone: updatedUser.phone,
+        email: updatedUser.email,
+      };
+      res.json(userInfo);
+    } else {
+      // If user is not found, return an error message
+      res.status(404).json({ message: "User not found" });
+    }
+  } catch (error) {
+    // If an error occurs during database query, return an error message
+    console.error("Error updating user information:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
 app.get("/managerInfo", authenticateToken, (req, res) => {
   // Access the logged-in user's ID from req.person
   const managerID = req.person.id;
@@ -575,8 +608,8 @@ app.get("/AddRooms", (req, res) => {
 
 app.post("/bookingRequest", authenticateToken, async (req, res) => {
   try {
-    // Extract the booking request data from the request body
-    const { hostelInfo, userInfo, id } = req.body;
+    // Extract the booking request data from the request body including selectedRoomBed
+    const { hostelInfo, userInfo, id, selectedRoomBed } = req.body;
 
     // Fetch the hostel details based on hostelId
     AddRoomsModel.findById(id).then(async (Room) => {
@@ -601,6 +634,7 @@ app.post("/bookingRequest", authenticateToken, async (req, res) => {
         userEmail: userInfo.email,
         userName: `${userInfo.fname} ${userInfo.lname}`,
         userPhone: userInfo.phone,
+        selectedRoomBedData: selectedRoomBed // Save selected bed value in the new column
       });
 
       // Save the new booking to the database
@@ -618,6 +652,8 @@ app.post("/bookingRequest", authenticateToken, async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
+
+
 app.get("/bookingRequest", (req, res) => {
   Booking.find({})
     .then((book) => res.json(book))

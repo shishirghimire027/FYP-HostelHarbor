@@ -40,7 +40,8 @@ function UpdateRoom() {
                     style={{ maxHeight: "200px" }}
                   />
                   <h5>Room No: {rooms.RoomNo}</h5>
-                  <p>Seater: {rooms.RoomBed}</p>
+                  <p>Seater: {rooms.Seater}</p>
+                  <p>Available Beds: {rooms.RoomBed}</p>
                   <p>Room Type: {rooms.RoomType}</p>
                   <p>Price: {rooms.RoomPrice}</p>
                   <p>Description: {rooms.RoomDescription}</p>
