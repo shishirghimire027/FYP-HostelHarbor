@@ -9,7 +9,7 @@ const jwt = require("jsonwebtoken");
 const cookieParsar = require("cookie-parser");
 const crypto = require("crypto");
 const http = require("http");
-const {Server} = require("socket.io");
+const { Server } = require("socket.io");
 
 const HostelModel = require("./models/Hostel");
 const AddHostelsModel = require("./models/Addhostels");
@@ -17,7 +17,6 @@ const HostelListsModel = require("./models/HostelLists");
 const AddRoomsModel = require("./models/AddRooms");
 const Booking = require("./models/Booking");
 const Resident = require("./models/Resident");
-
 
 const { userInfo } = require("os");
 
@@ -41,7 +40,7 @@ const io = new Server(server, {
     credentials: true,
   },
 });
-const { saveMessage, fetchMessages } = require('./models/dbOperations');
+const { saveMessage, fetchMessages } = require("./models/dbOperations");
 
 io.on("connection", (socket) => {
   console.log(`User Connected: ${socket.id}`);
@@ -49,23 +48,23 @@ io.on("connection", (socket) => {
   // socket.on("join_room", (data) => {
   //   socket.join(data);
   //   console.log(`User with Id: ${socket.id} joined room: ${data}`);
-    
+
   // });
   socket.on("join_room", async (data) => {
     socket.join(data);
     console.log(`User with Id: ${socket.id} joined room: ${data}`);
-  
+
     // Fetch previous messages for the room from the database
     const messages = await fetchMessages(data);
     // Emit the previous messages to the user who joined the room
-    socket.emit('receive_previous_messages', messages);
+    socket.emit("receive_previous_messages", messages);
   });
 
-  socket.on('send_message', async (data) => {
+  socket.on("send_message", async (data) => {
     const success = await saveMessage(data);
     if (success) {
       // Emit the message to all connected users
-      io.emit('receive_message', data);
+      io.emit("receive_message", data);
     }
   });
 
@@ -73,8 +72,6 @@ io.on("connection", (socket) => {
     console.log("User Disconnected", socket.id);
   });
 });
-
-
 
 app.use(
   "/images",
@@ -216,7 +213,6 @@ app.get("/userInfo", authenticateToken, (req, res) => {
     });
 });
 
-
 app.put("/userInfo", authenticateToken, async (req, res) => {
   try {
     // Access the logged-in user's ID from req.person
@@ -226,7 +222,11 @@ app.put("/userInfo", authenticateToken, async (req, res) => {
     const { fname, lname, phone, email } = req.body;
 
     // Query the database to find the user with the provided ID and update their information
-    const updatedUser = await HostelModel.findByIdAndUpdate(userId, { fname, lname, phone, email }, { new: true });
+    const updatedUser = await HostelModel.findByIdAndUpdate(
+      userId,
+      { fname, lname, phone, email },
+      { new: true }
+    );
 
     if (updatedUser) {
       // If user is found and updated successfully, return their updated information
@@ -480,8 +480,15 @@ const upload = multer({
 // });
 app.post("/CreateRoom", upload.single("file"), (req, res) => {
   console.log(req.file);
-  const { RoomNo, RoomBed, Seater, RoomType, RoomDescription, RoomPrice, hostelId } =
-    req.body;
+  const {
+    RoomNo,
+    RoomBed,
+    Seater,
+    RoomType,
+    RoomDescription,
+    RoomPrice,
+    hostelId,
+  } = req.body;
   const image = req.file.filename;
 
   // Fetch the hostel details based on hostelId
@@ -535,7 +542,6 @@ app.put("/ToggleStatus/:id", (req, res) => {
       res.json({ success: false });
     });
 });
-
 
 app.get("/AddRooms", (req, res) => {
   AddRoomsModel.find({})
@@ -634,7 +640,7 @@ app.post("/bookingRequest", authenticateToken, async (req, res) => {
         userEmail: userInfo.email,
         userName: `${userInfo.fname} ${userInfo.lname}`,
         userPhone: userInfo.phone,
-        selectedRoomBedData: selectedRoomBed // Save selected bed value in the new column
+        selectedRoomBedData: selectedRoomBed, // Save selected bed value in the new column
       });
 
       // Save the new booking to the database
@@ -652,7 +658,6 @@ app.post("/bookingRequest", authenticateToken, async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
-
 
 app.get("/bookingRequest", (req, res) => {
   Booking.find({})
@@ -724,12 +729,70 @@ app.get("/ResidentLists", (req, res) => {
     .catch((err) => res.json(err));
 });
 
+app.delete("/DeleteResident/:id", (req, res) => {
+  const id = req.params.id;
+  Resident.findByIdAndDelete({ _id: id })
+    .then((res) => res.json(res))
+    .catch((err) => res.json(err));
+});
+
+//Updating the Resident Data
+app.put("/UpdateResident/:id", (req, res) => {
+  const id = req.params.id;
+  Resident.findByIdAndUpdate(
+    { _id: id },
+    {
+      roomNo: req.body.roomNo,
+      roomType: req.body.roomType,
+      userName: req.body.userName,
+      userEmail: req.body.userEmail,
+      userPhone: req.body.userPhone,
+    }
+  )
+    .then((AddResidents) => res.json(AddResidents))
+    .catch((err) => res.json(err));
+});
+
+app.get("/ResidentLists/:id", (req, res) => {
+  const id = req.params.id;
+  Resident.findById({ _id: id })
+    .then((AddResidents) => res.json(AddResidents))
+    .catch((err) => res.json(err));
+});
+
+//Creating Residents
+app.post("/CreateResident", (req, res) => {
+  // Check if the required fields are missing and set them to null if necessary
+  const {
+    roomNo,
+    User_id,
+    roomBed,
+    roomDescription,
+    roomPrice,
+    selectedRoomBedData,
+  } = req.body;
+  const dataToCreate = {
+    roomNo: roomNo || null, // Set to null if not provided
+    User_id: User_id || null,
+    roomBed: roomBed || null,
+    roomDescription: roomDescription || null,
+    roomPrice: roomPrice || null,
+    selectedRoomBedData: selectedRoomBedData || null,
+    // Add other fields here as needed
+  };
+
+  // Create the resident with the modified data
+  Resident.create(dataToCreate)
+    .then((AddResidents) => res.json(AddResidents))
+    .catch((err) => res.json(err));
+});
+
 // // Endpoint to store a new chat message
 // app.post('/store-message', (req, res) => {
 //   const { author, message, room } = req.body;
 
 //   // Store message in MongoDB  database
- 
+
 //   const newMessage = new Message({
 //     author,
 //     message,
@@ -762,40 +825,35 @@ app.get("/ResidentLists", (req, res) => {
 //     });
 // });
 
-
 // Route to fetch previous messages
-app.post('/fetch_messages', async (req, res) => {
+app.post("/fetch_messages", async (req, res) => {
   const { room } = req.body;
   try {
     const messages = await fetchMessages(room);
     res.json(messages);
   } catch (error) {
-    console.error('Error fetching messages:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    console.error("Error fetching messages:", error);
+    res.status(500).json({ error: "Internal server error" });
   }
 });
 // Define a route for sending messages
 // Define a route for sending messages
 // Define a route for sending messages
-app.post('/send_message', async (req, res) => {
+app.post("/send_message", async (req, res) => {
   try {
     const messageData = req.body; // Retrieve message data from request body
     // Process and save the message data here...
     const success = await saveMessage(messageData);
     if (success) {
-      res.status(200).send('Message sent successfully');
+      res.status(200).send("Message sent successfully");
     } else {
-      res.status(500).json({ error: 'Failed to save message' });
+      res.status(500).json({ error: "Failed to save message" });
     }
   } catch (error) {
-    console.error('Error sending message:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    console.error("Error sending message:", error);
+    res.status(500).json({ error: "Internal server error" });
   }
 });
-
-
-
-
 
 server.listen(3001, () => {
   console.log("server is running");

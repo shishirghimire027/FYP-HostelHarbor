@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
-import { BsPersonLinesFill, BsTelephone, BsEnvelope } from "react-icons/bs";
+import {BsHouses, BsDoorClosed  } from "react-icons/bs";
+import { CiLocationOn } from "react-icons/ci";
+import { MdOutlineBedroomChild,MdOutlineAttachMoney } from "react-icons/md";
+import { FaBed } from "react-icons/fa";
 
 import "./VisitHostel.css"
 
@@ -30,7 +33,7 @@ const BookHostelInfo = () => {
       >
         <div className="row border-bottom pb-2 mb-2 align-items-center">
           <div className="col-1 text-center">
-            <BsPersonLinesFill className="icon" />
+            <BsHouses className="icon" />
           </div>
           <div className="col">
             <p className="mb-0">Hostel Name: {rooms.hostelName} </p>
@@ -38,7 +41,7 @@ const BookHostelInfo = () => {
         </div>
         <div className="row border-bottom pb-2 mb-2 align-items-center">
           <div className="col-1 text-center">
-            <BsPersonLinesFill className="icon" />
+            <CiLocationOn className="icon" />
           </div>
           <div className="col">
             <p className="mb-0">Location: {rooms.hostelLocation} </p>
@@ -46,7 +49,7 @@ const BookHostelInfo = () => {
         </div>
         <div className="row border-bottom pb-2 mb-2 align-items-center">
           <div className="col-1 text-center">
-            <BsPersonLinesFill className="icon" />
+            <MdOutlineBedroomChild className="icon" />
           </div>
           <div className="col">
             <p className="mb-0">Room No: {rooms.RoomNo} </p>
@@ -54,7 +57,7 @@ const BookHostelInfo = () => {
         </div>
         <div className="row border-bottom pb-2 mb-2 align-items-center">
           <div className="col-1 text-center">
-            <BsTelephone className="icon" />
+            <FaBed className="icon" />
           </div>
           <div className="col">
             <p className="mb-0"> Available Beds: {rooms.RoomBed}</p>
@@ -62,7 +65,7 @@ const BookHostelInfo = () => {
         </div>
         <div className="row border-bottom pb-2 mb-2 align-items-center">
           <div className="col-1 text-center">
-            <BsTelephone className="icon" />
+            <FaBed className="icon" />
           </div>
           <div className="col">
             <p className="mb-0"> Seater: {rooms.Seater}</p>
@@ -70,7 +73,7 @@ const BookHostelInfo = () => {
         </div>
         <div className="row border-bottom pb-2 mb-2 align-items-center">
           <div className="col-1 text-center">
-            <BsEnvelope className="icon" />
+            <BsDoorClosed className="icon" />
           </div>
           <div className="col">
             <p className="mb-0">Room Type: {rooms.RoomType} </p>
@@ -79,7 +82,7 @@ const BookHostelInfo = () => {
 
         <div className="row align-items-center">
           <div className="col-1 text-center">
-            <BsEnvelope className="icon" />
+            <MdOutlineAttachMoney className="icon" />
           </div>
           <div className="col">
             <p className="mb-0">Rent (Per Month): {rooms.RoomPrice} </p>

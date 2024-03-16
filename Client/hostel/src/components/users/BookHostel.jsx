@@ -20,10 +20,13 @@ function BookHostel() {
     try {
       const response = await axios.get(`http://localhost:3001/AddRooms/${id}`);
       const roomBedData = response.data;
-      const options = Array.from({ length: roomBedData.RoomBed }, (_, index) => ({
-        value: index + 1,
-        label: index + 1
-      }));
+      const options = Array.from(
+        { length: roomBedData.RoomBed },
+        (_, index) => ({
+          value: index + 1,
+          label: index + 1,
+        })
+      );
       setRoomBedOptions(options);
     } catch (error) {
       console.error("Error fetching room bed options:", error);
@@ -42,7 +45,7 @@ function BookHostel() {
       userInfo,
       hostelInfo,
       id,
-      selectedRoomBed
+      selectedRoomBed,
       // You can include any additional data you want to post
     };
 
@@ -116,20 +119,29 @@ function BookHostel() {
       <BookUserInfo />
       <BookHostelInfo />
       <BookRoomInfo />
-      <div className="form-group">
-        <label htmlFor="roomBedSelect">Select Room Bed:</label>
+      <div
+        className="form-group mt-3"
+        style={{ display: "flex", alignItems: "center", justifyContent: "center" }}
+      >
+        <label htmlFor="roomBedSelect" style={{ marginRight: "10px" }}>
+          Bed Quantity:
+        </label>
         <select
           id="roomBedSelect"
           className="form-control"
           value={selectedRoomBed}
+          style={{ width: "12%" }}
           onChange={(e) => setSelectedRoomBed(e.target.value)}
         >
-          <option value="">Select Room Bed</option>
-          {roomBedOptions.map(option => (
-            <option key={option.value} value={option.value}>{option.label}</option>
+          <option value="">Select Bed Quantity</option>
+          {roomBedOptions.map((option) => (
+            <option key={option.value} value={option.value}>
+              {option.label}
+            </option>
           ))}
         </select>
       </div>
+
       <div className="d-flex justify-content-center mt-4">
         <button
           className="btn btn-success"

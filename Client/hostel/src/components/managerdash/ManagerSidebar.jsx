@@ -41,7 +41,7 @@ function ManagerSidebar({ openSidebarToggle, OpenSidebar }) {
           </a>
         </li>
         <li className="sidebar-list-item">
-          <a href="/">
+          <a href="/ManagerViewHostelDetail">
             <BsHousesFill className="icon" /> View Hostel Detail
           </a>
         </li>

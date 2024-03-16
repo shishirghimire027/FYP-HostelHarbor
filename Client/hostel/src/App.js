@@ -61,6 +61,10 @@ import UserHostel from "./components/userHostel/UserHostel";
 import PendingRequest from "./components/userHostel/PendingRequest";
 import ChatInterface from "./components/userHostel/ChatInterface";
 import ManagerChatInterface from "./components/managerdash/ManagerChatInterface";
+import ViewResident from "./components/managerdash/ViewResident";
+import ManagerViewHostelDetail from "./pages/Manager/ManagerViewHostelDetail";
+import UpdateResident from "./components/managerdash/UpdateResident";
+import CreateResident from "./components/managerdash/CreateResident";
 
 function App() {
   return (
@@ -108,6 +112,10 @@ function App() {
           <Route path="/UpdateImage/:id" element={<UpdateImage />} />
           <Route path="/ManagerManageRoom" element={<ManagerManageRoom />} />
           <Route path="/ManagerChatInterface" element={<ManagerChatInterface />} />
+          <Route path="/ViewResident" element={<ViewResident />} />
+          <Route path="/ManagerViewHostelDetail" element={<ManagerViewHostelDetail />} />
+          <Route path="/UpdateResident/:id" element={<UpdateResident />} />
+          <Route path="/CreateResident" element={<CreateResident />} />
 
           <Route
             path="/ManagerManageBooking"
