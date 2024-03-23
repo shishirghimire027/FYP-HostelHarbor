@@ -11,6 +11,7 @@ function BookHostel() {
   const [showAlert, setShowAlert] = useState(false);
   const [roomBedOptions, setRoomBedOptions] = useState([]);
   const [selectedRoomBed, setSelectedRoomBed] = useState("");
+  const [checkInDate, setCheckInDate] = useState("");
 
   useEffect(() => {
     fetchRoomBedOptions();
@@ -46,6 +47,7 @@ function BookHostel() {
       hostelInfo,
       id,
       selectedRoomBed,
+      checkInDate,
       // You can include any additional data you want to post
     };
 
@@ -121,7 +123,11 @@ function BookHostel() {
       <BookRoomInfo />
       <div
         className="form-group mt-3"
-        style={{ display: "flex", alignItems: "center", justifyContent: "center" }}
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
       >
         <label htmlFor="roomBedSelect" style={{ marginRight: "10px" }}>
           Bed Quantity:
@@ -140,6 +146,27 @@ function BookHostel() {
             </option>
           ))}
         </select>
+      </div>
+      <div
+        className="form-group mt-3"
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <label htmlFor="checkInDateInput" style={{ marginRight: "10px" }}>
+          Check-In Date:
+        </label>
+        <input
+          type="date"
+          id="checkInDateInput"
+          className="form-control"
+          style={{ width: "12%" }}
+          min={new Date().toISOString().split("T")[0]}
+          value={checkInDate}
+          onChange={(e) => setCheckInDate(e.target.value)}
+        />
       </div>
 
       <div className="d-flex justify-content-center mt-4">

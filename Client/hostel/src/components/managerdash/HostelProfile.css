@@ -1,0 +1,35 @@
+.banners {
+  display: flex;
+
+  align-items: center;
+  background-color: rgb(61, 64, 125);
+  height: 220px;
+  width: 90%;
+  margin: 0 auto;
+  border: 1px solid black;
+}
+
+.img-banner {
+  padding: 20px;
+}
+
+.hostel-img {
+  height: 150px;
+  width: 150px;
+}
+
+.tablez {
+  width: 30% !important;
+  border-collapse: collapse !important;
+  background-color: transparent !important;
+  margin-left: 50px;
+}
+
+.tablez td {
+  padding: 8px !important;
+  text-align: left !important;
+}
+
+.tablez td:first-child {
+  font-weight: bold !important;
+}

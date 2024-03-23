@@ -7,6 +7,7 @@ const AddHostelsSchema = new mongoose.Schema(
     Hostel_Type: String,
     Manager_Name: String,
     Manager_Contact: Number,
+    image: String,
     email: String,
     password: String,
     role: {

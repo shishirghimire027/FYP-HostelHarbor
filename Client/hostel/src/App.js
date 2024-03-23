@@ -65,6 +65,8 @@ import ViewResident from "./components/managerdash/ViewResident";
 import ManagerViewHostelDetail from "./pages/Manager/ManagerViewHostelDetail";
 import UpdateResident from "./components/managerdash/UpdateResident";
 import CreateResident from "./components/managerdash/CreateResident";
+import HostelProfile from "./components/managerdash/HostelProfile"
+import UpdateHostelProfile from "./components/managerdash/UpdateHostelProfile";
 
 function App() {
   return (
@@ -116,6 +118,8 @@ function App() {
           <Route path="/ManagerViewHostelDetail" element={<ManagerViewHostelDetail />} />
           <Route path="/UpdateResident/:id" element={<UpdateResident />} />
           <Route path="/CreateResident" element={<CreateResident />} />
+          <Route path="/HostelProfile" element={<HostelProfile />} />
+          <Route path="/UpdateHostelProfile" element={<UpdateHostelProfile />} />
 
           <Route
             path="/ManagerManageBooking"

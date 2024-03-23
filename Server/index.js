@@ -84,19 +84,6 @@ mongoose.connect("mongodb://localhost:27017/Hostel");
 const secretKey = crypto.randomBytes(32).toString("hex");
 console.log("Generated Secret Key:", secretKey);
 
-// Middleware to authenticate token
-// function authenticateToken(req, res, next) {
-//   const token =
-//     req.header("Authorization") && req.header("Authorization").split(" ")[1];
-//   if (!token)
-//     return res.status(401).json({ message: "Token is missing or invalid" });
-
-//   jwt.verify(token, secretKey, (err, person) => {
-//     if (err) return res.status(403).json({ message: "Access is Restricted" });
-//     req.person = person;
-//     next();
-//   });
-// }
 function authenticateToken(req, res, next) {
   const authHeader = req.header("Authorization");
   const token = authHeader && authHeader.split(" ")[1];
@@ -159,29 +146,6 @@ app.post("/Managerlogin", (req, res) => {
     }
   });
 });
-
-// app.get("/managerData", authenticateToken, (req, res) => {
-//   const loggedInManagerId = req.person.id; // Retrieve the logged-in manager's ID from the token payload
-
-//   // Find the manager's data using their ID
-//   HostelListsModel.findById(loggedInManagerId)
-//     .then((manager) => {
-//       if (manager) {
-//         // If manager data is found, send it as response
-//         res.status(200).json({ message: "Manager data retrieved successfully", manager });
-//       } else {
-//         // If manager data is not found, send an appropriate message
-//         res.status(404).json({ message: "Manager data not found" });
-//       }
-//     })
-//     .catch((err) => {
-//       // If any error occurs during the process, send an error response
-//       res.status(500).json({ message: "Internal server error" });
-//     });
-// });
-
-// Example route handler to get manager information after login
-// Middleware to authenticate token
 
 // Example route handler to get user information after login
 app.get("/userInfo", authenticateToken, (req, res) => {
@@ -266,6 +230,7 @@ app.get("/managerInfo", authenticateToken, (req, res) => {
           Manager_Name: manager.Manager_Name,
           Manager_Contact: manager.Manager_Contact,
           email: manager.email,
+          image: manager.image,
         };
         res.json(managerInfo);
         console.log("managerInfo", managerInfo);
@@ -310,32 +275,60 @@ app.post("/Create", (req, res) => {
     .catch((err) => res.json(err));
 });
 
-app.post("/HostelReg", (req, res) => {
-  const {
-    Hostel_Name,
-    Hostel_Location,
-    Hostel_Type,
-    Manager_Name,
-    Manager_Contact,
-    email,
-    password,
-  } = req.body;
-  bcrypt
-    .hash(password, 10)
-    .then((hash) => {
-      AddHostelsModel.create({
-        Hostel_Name,
-        Hostel_Location,
-        Hostel_Type,
-        Manager_Name,
-        Manager_Contact,
-        email,
-        password: hash,
-      })
-        .then((AddHostels) => res.json(AddHostels))
-        .catch((err) => res.json(err));
-    })
-    .catch((err) => console.log(err.message));
+const storages = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "../Client/hostel/public/images/hostels");
+  },
+  filename: (req, file, cb) => {
+    cb(
+      null,
+      file.fieldname + "_" + Date.now() + path.extname(file.originalname)
+    );
+  },
+});
+
+const uploads = multer({
+  storage: storages,
+});
+
+app.post("/HostelReg", uploads.single("file"), async (req, res) => {
+  try {
+    if (!req.file) {
+      throw new Error("No file uploaded.");
+    }
+
+    const {
+      Hostel_Name,
+      Hostel_Location,
+      Hostel_Type,
+      Manager_Name,
+      Manager_Contact,
+      email,
+      password,
+    } = req.body;
+
+    const image = req.file.filename;
+
+    // Hash the password
+    const hash = await bcrypt.hash(password, 10);
+
+    // Create a new hostel entry in the database
+    const newHostel = await AddHostelsModel.create({
+      Hostel_Name,
+      Hostel_Location,
+      Hostel_Type,
+      Manager_Name,
+      Manager_Contact,
+      email,
+      password: hash,
+      image,
+    });
+
+    res.status(201).json(newHostel); // Respond with the created hostel data
+  } catch (error) {
+    console.error("Error in HostelReg endpoint:", error);
+    res.status(400).json({ error: error.message });
+  }
 });
 
 // app.post("/HostelReg", (req, res) => {
@@ -460,24 +453,7 @@ const storage = multer.diskStorage({
 const upload = multer({
   storage: storage,
 });
-// app.post("/CreateRoom", upload.single("file"), (req, res) => {
-//   console.log(req.file);
-//   const { RoomNo, RoomBed, RoomType, RoomDescription, RoomPrice, hostelId } =
-//     req.body;
-//   const image = req.file.filename;
 
-//   AddRoomsModel.create({
-//     RoomNo,
-//     RoomBed,
-//     RoomType,
-//     RoomDescription,
-//     RoomPrice,
-//     image,
-//     hostel: hostelId, // Assign hostelId to hostel field
-//   })
-//     .then((AddRooms) => res.json(AddRooms))
-//     .catch((err) => console.log(err));
-// });
 app.post("/CreateRoom", upload.single("file"), (req, res) => {
   console.log(req.file);
   const {
@@ -523,15 +499,6 @@ app.delete("/DeleteRoom/:id", (req, res) => {
     .catch((err) => res.status(500).json({ success: false, error: err }));
 });
 
-// app.put("/MarkBooked/:id", (req, res) => {
-//   const roomId = req.params.id;
-//   AddRoomsModel.findByIdAndUpdate(roomId, { status: 'booked' })
-//     .then(() => res.json({ success: true }))
-//     .catch((err) => {
-//       console.error("Error marking room as booked:", err);
-//       res.json({ success: false });
-//     });
-// });
 app.put("/ToggleStatus/:id", (req, res) => {
   const roomId = req.params.id;
   const { status } = req.body;
@@ -573,18 +540,6 @@ app.put("/UpdateRoom/:id", (req, res) => {
     .catch((err) => res.json(err));
 });
 
-// app.put("/UpdateRoomImg/:id", upload.single("image"), (req, res) => {
-//   const id = req.params.id;
-//   const imagePath = req.file.filename; // This will contain the filename of the uploaded image
-
-//   AddRoomsModel.findByIdAndUpdate(
-//     { _id: id },
-//     { image: imagePath }, // Update the image field with the new filename
-//     { new: true } // To return the updated document
-//   )
-//     .then((updatedRoom) => res.json(updatedRoom))
-//     .catch((err) => res.status(500).json({ error: err }));
-// });
 app.put("/UpdateRoomImg/:id", upload.single("image"), (req, res) => {
   const id = req.params.id;
   const imagePath = req.file.filename;
@@ -615,7 +570,7 @@ app.get("/AddRooms", (req, res) => {
 app.post("/bookingRequest", authenticateToken, async (req, res) => {
   try {
     // Extract the booking request data from the request body including selectedRoomBed
-    const { hostelInfo, userInfo, id, selectedRoomBed } = req.body;
+    const { hostelInfo, userInfo, id, selectedRoomBed, checkInDate } = req.body;
 
     // Fetch the hostel details based on hostelId
     AddRoomsModel.findById(id).then(async (Room) => {
@@ -641,6 +596,7 @@ app.post("/bookingRequest", authenticateToken, async (req, res) => {
         userName: `${userInfo.fname} ${userInfo.lname}`,
         userPhone: userInfo.phone,
         selectedRoomBedData: selectedRoomBed, // Save selected bed value in the new column
+        selectedDate: checkInDate,
       });
 
       // Save the new booking to the database
@@ -786,44 +742,6 @@ app.post("/CreateResident", (req, res) => {
     .then((AddResidents) => res.json(AddResidents))
     .catch((err) => res.json(err));
 });
-
-// // Endpoint to store a new chat message
-// app.post('/store-message', (req, res) => {
-//   const { author, message, room } = req.body;
-
-//   // Store message in MongoDB  database
-
-//   const newMessage = new Message({
-//     author,
-//     message,
-//     room,
-//     timestamp: new Date()
-//   });
-//   newMessage.save()
-//     .then(() => {
-//       res.status(201).send('Message stored successfully');
-//     })
-//     .catch((error) => {
-//       console.error('Error storing message:', error);
-//       res.status(500).send('Internal Server Error');
-//     });
-// });
-
-// // Endpoint to retrieve chat history for a specific room
-// app.get('/chat-history/:room', (req, res) => {
-//   const room = req.params.room;
-
-//   // Retrieve chat history from the database for the specified room
-
-//   Message.find({ room })
-//     .then((messages) => {
-//       res.json(messages);
-//     })
-//     .catch((error) => {
-//       console.error('Error retrieving chat history:', error);
-//       res.status(500).send('Internal Server Error');
-//     });
-// });
 
 // Route to fetch previous messages
 app.post("/fetch_messages", async (req, res) => {

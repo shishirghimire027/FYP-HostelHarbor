@@ -59,6 +59,11 @@ const bookingSchema = new mongoose.Schema({
     type: Number,
     required: true
   },
+
+  selectedDate: {
+    type: Date,
+    required: true
+  },
  
   status: {
     type: String,

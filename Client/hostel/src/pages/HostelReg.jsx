@@ -4,38 +4,58 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
 function HostelReg() {
-  const [Hostel_Name, setHostelName] = useState("");
-  const [Hostel_Type, setHostelType] = useState("");
-  const [Hostel_Location, setHostelLocation] = useState("");
-  const [Manager_Name, setManagerName] = useState("");
-  const [Manager_Contact, setManagerContact] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [formData, setFormData] = useState({
+    Hostel_Name: "",
+    Hostel_Type: "",
+    Hostel_Location: "",
+    Manager_Name: "",
+    Manager_Contact: "",
+    email: "",
+    password: "",
+    file: null,
+  });
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
+
+  const handleFileChange = (e) => {
+    setFormData((prevData) => ({
+      ...prevData,
+      file: e.target.files[0],
+    }));
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    axios
-      .post("http://localhost:3001/HostelReg", {
-        Hostel_Name,
-        Hostel_Type,
-        Hostel_Location,
-        Manager_Name,
-        Manager_Contact,
-        email,
-        password,
-      })
-      .then((result) => {
-        console.log(result);
-        navigate("/AddHostel"); // Providing the absolute path
-      })
-      .catch((err) => console.log(err));
+    const { file, ...data } = formData;
+    const formDataToSend = new FormData();
+    formDataToSend.append("file", file);
+    for (const key in data) {
+      formDataToSend.append(key, data[key]);
+    }
+
+    try {
+      const response = await axios.post("http://localhost:3001/HostelReg", formDataToSend, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      console.log(response.data);
+      navigate("/AddHostel");
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (
     <>
       <form className="RegForm" onSubmit={handleSubmit}>
-        <h2 className="mb-4">Register Hostel</h2>
         <div className="mb-3">
           <label htmlFor="HostelName" className="form-label">
             Hostel Name
@@ -44,44 +64,50 @@ function HostelReg() {
             type="text"
             className="form-control"
             id="HostelName"
-            aria-describedby="HostelName"
-            onChange={(e) => setHostelName(e.target.value)}
+            name="Hostel_Name"
+            value={formData.Hostel_Name}
+            onChange={handleChange}
           />
         </div>
-        <div className="row mb-5">
-          <div className="col-md-6">
-            <label htmlFor="Location" className="form-label">
-              Hostel Location
-            </label>
-            <select
-              className="form-select"
-              aria-label="Hostel Location"
-              onChange={(e) => setHostelLocation(e.target.value)}
-            >
-              <option defaultValue>Select Location</option>
-              <option>Baneshwor</option>
-              <option>Tinkune</option>
-              <option>Thapatali</option>
-              <option>Buddhanagar</option>
-              <option>Anamnagar</option>
-              <option>Dillibazar</option>
-            </select>
-          </div>
-          <div className="col-md-6">
-            <label htmlFor="HostelType" className="form-label">
-              Hostel Type
-            </label>
-            <select
-              className="form-select"
-              aria-label="Hostel Type"
-              onChange={(e) => setHostelType(e.target.value)}
-            >
-              <option defaultValue>Select Hostel Type</option>
-              <option>Boys</option>
-              <option>Girls</option>
-            </select>
-          </div>
+
+        <div className="mb-3">
+          <label htmlFor="HostelType" className="form-label">
+            Hostel Type
+          </label>
+          <select
+            className="form-select"
+            id="HostelType"
+            name="Hostel_Type"
+            value={formData.Hostel_Type}
+            onChange={handleChange}
+          >
+            <option value="">Select Hostel Type</option>
+            <option value="Boys">Boys</option>
+            <option value="Girls">Girls</option>
+          </select>
         </div>
+
+        <div className="mb-3">
+          <label htmlFor="Location" className="form-label">
+            Hostel Location
+          </label>
+          <select
+            className="form-select"
+            id="Location"
+            name="Hostel_Location"
+            value={formData.Hostel_Location}
+            onChange={handleChange}
+          >
+            <option value="">Select Location</option>
+            <option value="Baneshwor">Baneshwor</option>
+            <option value="Tinkune">Tinkune</option>
+            <option value="Thapatali">Thapatali</option>
+            <option value="Buddhanagar">Buddhanagar</option>
+            <option value="Anamnagar">Anamnagar</option>
+            <option value="Dillibazar">Dillibazar</option>
+          </select>
+        </div>
+
         <div className="mb-3">
           <label htmlFor="ManagerName" className="form-label">
             Manager Name
@@ -90,44 +116,64 @@ function HostelReg() {
             type="text"
             className="form-control"
             id="ManagerName"
-            aria-describedby="ManagerName"
-            onChange={(e) => setManagerName(e.target.value)}
+            name="Manager_Name"
+            value={formData.Manager_Name}
+            onChange={handleChange}
           />
         </div>
+
         <div className="mb-3">
-          <label htmlFor="ManagerName" className="form-label">
+          <label htmlFor="ManagerContact" className="form-label">
             Manager Contact
           </label>
           <input
-            type="tel"
+            type="text"
             className="form-control"
-            id="ManagerName"
-            aria-describedby="ManagerName"
-            onChange={(e) => setManagerContact(e.target.value)}
+            id="ManagerContact"
+            name="Manager_Contact"
+            value={formData.Manager_Contact}
+            onChange={handleChange}
           />
         </div>
+
         <div className="mb-3">
-          <label htmlFor="exampleInputEmail1" className="form-label">
+          <label htmlFor="email" className="form-label">
             Email address
           </label>
           <input
             type="email"
             className="form-control"
-            id="exampleInputEmail1"
-            aria-describedby="emailHelp"
-            onChange={(e) => setEmail(e.target.value)}
+            id="email"
+            name="email"
+            value={formData.email}
+            onChange={handleChange}
           />
         </div>
+
         <div className="mb-3">
-          <label htmlFor="exampleInputPassword1" className="form-label">
+          <label htmlFor="password" className="form-label">
             Password
           </label>
           <input
             type="password"
             className="form-control"
-            id="exampleInputPassword1"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            id="password"
+            name="password"
+            value={formData.password}
+            onChange={handleChange}
+          />
+        </div>
+
+        <div className="mb-3">
+          <label className="form-label" htmlFor="roomImages">
+            <b>Upload Room images</b>
+          </label>
+          <input
+            type="file"
+            className="form-control"
+            id="roomImages"
+            name="file"
+            onChange={handleFileChange}
           />
         </div>
 

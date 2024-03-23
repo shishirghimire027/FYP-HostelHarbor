@@ -8,6 +8,7 @@ const HostelListsSchema = new mongoose.Schema(
     Manager_Name: String,
     Manager_Contact: Number,
     email: String,
+    image: String,
     password: String,
     role: {
       type: String,

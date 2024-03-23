@@ -97,8 +97,8 @@ function ManageBooking() {
               <th>Name</th>
               <th>Contact</th>
               <th>Email</th>
-              
               <th>Requested Beds</th>
+              <th>Check-In</th>
               <th>Action</th>
             </tr>
           </thead>
@@ -111,6 +111,8 @@ function ManageBooking() {
                 <td>{addbooking.userEmail}</td>
                 
                 <td>{addbooking.selectedRoomBedData}</td>
+                <td>{addbooking.selectedDate.split('T')[0]}</td>
+
 
                 <td>
                   {/* <Link
