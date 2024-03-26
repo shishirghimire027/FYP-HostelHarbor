@@ -1,12 +1,12 @@
 import React, { useState } from "react";
-import "./MVHD.css";
 import "../Manager.css";
+import "./MVHD.css";
 import ManagerHeader from "../../components/managerdash/ManagerHeader";
-import ManagerSidebar from "../../components/managerdash/ManagerSidebar";
-import HostelProfile from "../../components/managerdash/HostelProfile";
-import ViewResident from "../../components/managerdash/ViewResident";
 
-function ManagerManageRoom() {
+import ManagerSidebar from "../../components/managerdash/ManagerSidebar";
+import UpdateHostelProfile from "../../components/managerdash/UpdateHostelProfile";
+
+function ManageHostel() {
   const [openSidebarToggle, setOpenSidebarToggle] = useState(false);
 
   const OpenSidebar = () => {
@@ -17,16 +17,11 @@ function ManagerManageRoom() {
     <>
       <div className="grid-containers">
         <ManagerHeader OpenSidebar={OpenSidebar} />
-
-        {/* Render HostelProfile */}
-        <div className="main" style={{ width: "185%" }}>
+        <div className="main mt-2" style={{ width: "100%" }}>
           <div className="Hostel-Profile mt-2">
-            <HostelProfile />
+            <UpdateHostelProfile />
           </div>
-
-          <ViewResident />
         </div>
-
         <ManagerSidebar
           openSidebarToggle={openSidebarToggle}
           OpenSidebar={OpenSidebar}
@@ -36,4 +31,4 @@ function ManagerManageRoom() {
   );
 }
 
-export default ManagerManageRoom;
+export default ManageHostel;

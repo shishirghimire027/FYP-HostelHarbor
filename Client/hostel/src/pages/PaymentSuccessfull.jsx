@@ -1,9 +1,9 @@
-// Final.jsx
+// PaymentSuccessfull.jsx
 import React from "react";
 
-function Final() {
+function PaymentSuccessfull() {
   return (
-    <div className="container mt-5">
+    <div className="container mt-5  d-flex justify-content-center">
       <div className="d-flex flex-column align-items-center">
         <div className="text-success">
           <svg
@@ -24,14 +24,21 @@ function Final() {
         <div className="mt-3 text-xl font-weight-bold text-uppercase text-success">
           Congratulations!
         </div>
-        <div className="text-lg font-weight-bold text-gray-500">
-          You have filled the form.
+        <div className="text-lg font-weight-bold text-gray-500 mt-4">
+          Payment is Successfull.
         </div>
 
-        <button className="btn btn-success">Submit</button>
+        <button className="btn btn-success mt-3">
+          <a
+            href="/YourHostel"
+            style={{ color: "white", textDecoration: "none" }}
+          >
+            View Hostel
+          </a>
+        </button>
       </div>
     </div>
   );
 }
 
-export default Final;
+export default PaymentSuccessfull;

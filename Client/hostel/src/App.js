@@ -65,8 +65,11 @@ import ViewResident from "./components/managerdash/ViewResident";
 import ManagerViewHostelDetail from "./pages/Manager/ManagerViewHostelDetail";
 import UpdateResident from "./components/managerdash/UpdateResident";
 import CreateResident from "./components/managerdash/CreateResident";
-import HostelProfile from "./components/managerdash/HostelProfile"
+import HostelProfile from "./components/managerdash/HostelProfile";
 import UpdateHostelProfile from "./components/managerdash/UpdateHostelProfile";
+import ManageHostel from "./pages/Manager/ManageHostel";
+import Membership from "./components/Membership";
+import PaymentSuccessfull from "./pages/PaymentSuccessfull";
 
 function App() {
   return (
@@ -113,13 +116,23 @@ function App() {
           <Route path="/EditRoom/:id" element={<EditRoom />} />
           <Route path="/UpdateImage/:id" element={<UpdateImage />} />
           <Route path="/ManagerManageRoom" element={<ManagerManageRoom />} />
-          <Route path="/ManagerChatInterface" element={<ManagerChatInterface />} />
+          <Route
+            path="/ManagerChatInterface"
+            element={<ManagerChatInterface />}
+          />
           <Route path="/ViewResident" element={<ViewResident />} />
-          <Route path="/ManagerViewHostelDetail" element={<ManagerViewHostelDetail />} />
+          <Route
+            path="/ManagerViewHostelDetail"
+            element={<ManagerViewHostelDetail />}
+          />
           <Route path="/UpdateResident/:id" element={<UpdateResident />} />
           <Route path="/CreateResident" element={<CreateResident />} />
           <Route path="/HostelProfile" element={<HostelProfile />} />
-          <Route path="/UpdateHostelProfile" element={<UpdateHostelProfile />} />
+          <Route
+            path="/UpdateHostelProfile"
+            element={<UpdateHostelProfile />}
+          />
+          <Route path="/ManageHostel" element={<ManageHostel />} />
 
           <Route
             path="/ManagerManageBooking"
@@ -143,6 +156,9 @@ function App() {
           <Route path="/Detail" element={<Detail />} />
           <Route path="/Final" element={<Final />} />
           <Route path="/Payment" element={<Payment />} />
+
+          <Route path="/Membership" element={<Membership />} />
+          <Route path="/PaymentSuccessfull" element={<PaymentSuccessfull />} />
 
           {/* <Route
             path="/Stepper"

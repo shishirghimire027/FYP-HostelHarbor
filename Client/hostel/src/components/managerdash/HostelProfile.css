@@ -1,12 +1,18 @@
 .banners {
+  position: relative;
   display: flex;
-
   align-items: center;
   background-color: rgb(61, 64, 125);
   height: 220px;
-  width: 90%;
+  width: 100%;
   margin: 0 auto;
   border: 1px solid black;
+}
+.btns {
+  position: absolute;
+  top: 0;
+  right: 0;
+  
 }
 
 .img-banner {

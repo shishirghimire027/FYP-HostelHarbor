@@ -46,7 +46,7 @@ function ManagerSidebar({ openSidebarToggle, OpenSidebar }) {
           </a>
         </li>
         <li className="sidebar-list-item">
-          <a href="/">
+          <a href="/ManageHostel">
             <BsHouseGear className="icon" /> Manage Hostel
           </a>
         </li>

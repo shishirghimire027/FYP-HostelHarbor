@@ -10,6 +10,7 @@ const cookieParsar = require("cookie-parser");
 const crypto = require("crypto");
 const http = require("http");
 const { Server } = require("socket.io");
+const axios = require("axios");
 
 const HostelModel = require("./models/Hostel");
 const AddHostelsModel = require("./models/Addhostels");
@@ -277,7 +278,7 @@ app.post("/Create", (req, res) => {
 
 const storages = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, "../Client/hostel/public/images/hostels");
+    cb(null, path.join(__dirname, "../Client/hostel/public/images/hostels"));
   },
   filename: (req, file, cb) => {
     cb(
@@ -290,6 +291,11 @@ const storages = multer.diskStorage({
 const uploads = multer({
   storage: storages,
 });
+
+app.use(
+  "/images/hostels",
+  express.static("../Client/hostel/public/images/hostels")
+);
 
 app.post("/HostelReg", uploads.single("file"), async (req, res) => {
   try {
@@ -330,6 +336,72 @@ app.post("/HostelReg", uploads.single("file"), async (req, res) => {
     res.status(400).json({ error: error.message });
   }
 });
+
+app.put(
+  "/updateManagerInfo",
+  authenticateToken,
+  uploads.single("image"),
+  async (req, res) => {
+    try {
+      // Access the logged-in manager's ID from req.person
+      const managerID = req.person.id;
+
+      // Extract updated manager info from the request body
+      const {
+        Hostel_Name,
+        Hostel_Location,
+        Hostel_Type,
+        Manager_Name,
+        Manager_Contact,
+        email,
+      } = req.body;
+
+      // Check if there's a file uploaded
+      const image = req.file ? req.file.filename : undefined;
+
+      // Find the manager document by ID and update only the specified fields
+      const updatedManager = await HostelListsModel.findByIdAndUpdate(
+        managerID,
+        {
+          $set: {
+            Hostel_Name,
+            Hostel_Location,
+            Hostel_Type,
+            Manager_Name,
+            Manager_Contact,
+            email,
+            image,
+          },
+        },
+        { new: true }
+      );
+
+      if (updatedManager) {
+        // If manager is found and updated successfully, return their updated information
+        const managerInfo = {
+          _id: updatedManager._id,
+          Hostel_Name: updatedManager.Hostel_Name,
+          Hostel_Location: updatedManager.Hostel_Location,
+          Hostel_Type: updatedManager.Hostel_Type,
+          Manager_Name: updatedManager.Manager_Name,
+          Manager_Contact: updatedManager.Manager_Contact,
+          email: updatedManager.email,
+          image: updatedManager.image,
+        };
+        res.status(200).json(managerInfo);
+      } else {
+        // If manager is not found, return an error message
+        res
+          .status(404)
+          .json({ message: "Manager not found or update failed." });
+      }
+    } catch (error) {
+      // If an error occurs during database query or update, return an error message
+      console.error("Error updating manager information:", error);
+      res.status(400).json({ error: error.message });
+    }
+  }
+);
 
 // app.post("/HostelReg", (req, res) => {
 //   AddHostelsModel.create(req.body)
@@ -770,6 +842,36 @@ app.post("/send_message", async (req, res) => {
   } catch (error) {
     console.error("Error sending message:", error);
     res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+//...................PAYMENT.......................//
+// const paymentRoute = require("./routes/payment");
+// app.use("/khalti-api", paymentRoute);
+require("dotenv").config();
+
+app.post("/khalti-api", async (req, res) => {
+  const payload = req.body;
+  const KhaltiResponse = await axios.post(
+    "https://a.khalti.com/api/v2/epayment/initiate/",
+    payload,
+    {
+      headers: {
+        Authorization: `Key ${process.env.KHALTI_SECRET_KEY}`,
+      },
+    }
+  );
+  console.log(KhaltiResponse.data);
+  if (KhaltiResponse) {
+    res.json({
+      success: true,
+      data: KhaltiResponse?.data,
+    });
+  } else {
+    res.json({
+      success: false,
+      message: "something went wrong",
+    });
   }
 });
 

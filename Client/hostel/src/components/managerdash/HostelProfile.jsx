@@ -4,7 +4,7 @@ import "./HostelProfile.css";
 
 const HostelProfile = () => {
   // State to store manager's information
-  const [managerInfo, setManagerInfo] = useState(null);
+  const [hostels, setManagerInfo] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -52,31 +52,29 @@ const HostelProfile = () => {
     <div className="banners">
       <div className="img-banner">
         {/* Display the uploaded image if available */}
-        {managerInfo && managerInfo.image ? (
-  <img
-  className="hostel-img"
-  src={`http://localhost:3001/images/hostels/${managerInfo.image}`}
-  alt={`${managerInfo.Hostel_Name}`}
-  onError={(e) => console.log("Error loading image:", e, e.nativeEvent)}
-/>
-
-) : (
-  <div>Error loading image</div>
-)}
+        {hostels && hostels.image ? (
+          <img
+            style={{ height: "150px", width: "150px", objectFit: "cover" }}
+            src={`http://localhost:3001/images/hostels/${hostels.image}`}
+            alt="Manager"
+          />
+        ) : (
+          <div>Error loading image</div>
+        )}
       </div>
       <table className="tablez text-white">
         <tbody>
           <tr>
             <td>Hostel Name</td>
-            <td>{managerInfo.Hostel_Name}</td>
+            <td>{hostels.Hostel_Name}</td>
           </tr>
           <tr>
             <td>Location</td>
-            <td>{managerInfo.Hostel_Location}</td>
+            <td>{hostels.Hostel_Location}</td>
           </tr>
           <tr>
             <td>Type</td>
-            <td>{managerInfo.Hostel_Type}</td>
+            <td>{hostels.Hostel_Type}</td>
           </tr>
         </tbody>
       </table>
@@ -85,15 +83,15 @@ const HostelProfile = () => {
         <tbody>
           <tr>
             <td>Manager Name</td>
-            <td>{managerInfo.Manager_Name}</td>
+            <td>{hostels.Manager_Name}</td>
           </tr>
           <tr>
             <td>Contact</td>
-            <td>{managerInfo.Manager_Contact}</td>
+            <td>{hostels.Manager_Contact}</td>
           </tr>
           <tr>
             <td>Email</td>
-            <td>{managerInfo.email}</td>
+            <td>{hostels.email}</td>
           </tr>
         </tbody>
       </table>
